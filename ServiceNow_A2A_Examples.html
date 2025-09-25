@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceNow A2A Testing - Examples</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #323130;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            font-weight: 300;
+        }
+        
+        .nav-links {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 10px 20px;
+            background: #0078d4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 8px;
+            right: 60px;
+            background: #0078d4;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #323130;
+            color: white;
+            border: 1px solid #605e5c;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #484644;
+        }
+        
+        .copy-btn.copied {
+            background: #107c10;
+            border-color: #107c10;
+        }
+        
+        h1, h2, h3 {
+            color: #323130;
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            border-bottom: 3px solid #0078d4;
+            padding-bottom: 10px;
+        }
+        
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .example-card {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0078d4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ServiceNow A2A Testing</h1>
+        <p>Usage Examples</p>
+    </div>
+    
+    <div class="nav-links">
+        <a href="ServiceNow_A2A_Bash_Scripts.html">← Bash Scripts</a>
+        <a href="#current">4. Examples</a>
+        <a href="ServiceNow_A2A_Troubleshooting.html">5. Troubleshooting →</a>
+    </div>
+    
+    <section>
+        <h1>💡 Usage Examples</h1>
+        
+        <div class="example-grid">
+            <div class="example-card">
+                <h3>🐍 Python Examples</h3>
+                <p>Comprehensive Python integration patterns</p>
+            </div>
+            <div class="example-card">
+                <h3>📜 Bash Examples</h3>
+                <p>Automated testing and script integration</p>
+            </div>
+            <div class="example-card">
+                <h3>🔧 Curl Examples</h3>
+                <p>Manual testing and debugging commands</p>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <h1>🐍 Python Usage Examples</h1>
+        
+        <h2>Basic Usage</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>import asyncio
+from generic_a2a_client import ServiceNowA2AClient
+
+async def basic_test():
+    """Simple agent test"""
+    client = ServiceNowA2AClient()
+    response = await client.connect_and_send("What can you help me with?")
+    print(f"Agent response: {response}")
+
+asyncio.run(basic_test())</pre>
+        </div>
+        
+        <h2>Direct Configuration</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>async def direct_config_test():
+    """Test with direct configuration"""
+    client = ServiceNowA2AClient(
+        instance="your-instance.service-now.com",
+        agent_id="your-agent-id",
+        api_key="your-api-key"
+    )
+    
+    response = await client.connect_and_send("How can you assist me?")
+    return response</pre>
+        </div>
+        
+        <h2>Conversation with Context</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>async def conversation_test():
+    """Multi-turn conversation with context"""
+    client = ServiceNowA2AClient()
+    
+    # First message
+    print("User: What topics do you cover?")
+    response1 = await client.connect_and_send("What topics do you cover?")
+    
+    # Extract context for follow-up
+    context_id = response1.get('result', {}).get('contextId')
+    
+    # Follow-up message with context
+    print("User: Tell me more about the first topic")
+    response2 = await client.connect_and_send(
+        "Tell me more about the first topic",
+        context_id=context_id
+    )
+    
+    return response1, response2</pre>
+        </div>
+        
+        <h2>Error Handling Example</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>async def robust_test():
+    """Test with comprehensive error handling"""
+    try:
+        client = ServiceNowA2AClient()
+        
+        print(f"Testing agent: {client.config.agent_id}")
+        print(f"Instance: {client.config.instance}")
+        
+        response = await client.connect_and_send("Test message")
+        print("✅ Test successful!")
+        return response
+        
+    except ValueError as e:
+        print(f"❌ Configuration Error: {e}")
+        print("Please check your .env file")
+        
+    except Exception as e:
+        print(f"❌ Test failed: {e}")
+        print("Check network connectivity and credentials")</pre>
+        </div>
+    </section>
+    
+    <section>
+        <h1>📜 Bash Script Examples</h1>
+        
+        <h2>Basic Testing</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Basic test with .env configuration
+./test_servicenow_agent.sh
+
+# Test with custom message
+./test_servicenow_agent.sh -m "Tell me about ServiceNow integrations"
+
+# Discovery only test
+./test_servicenow_agent.sh --discovery-only
+
+# Verbose output for debugging
+./test_servicenow_agent.sh -v</pre>
+        </div>
+        
+        <h2>Custom Configuration</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Test with command-line parameters
+./test_servicenow_agent.sh \
+  -i "company.service-now.com" \
+  -a "your-agent-id" \
+  -t "your-api-key" \
+  -m "What services do you provide?"</pre>
+        </div>
+        
+        <h2>Generate Curl Commands</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Generate curl commands for manual testing
+./generate_curl_commands.sh -m "Your test message"
+
+# Use generated commands
+./discovery_command.sh | jq
+./send_message_command.sh | jq</pre>
+        </div>
+        
+        <h2>Automated Testing Integration</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># In your automated testing environment
+export SERVICENOW_INSTANCE="your-instance.service-now.com"
+export SERVICENOW_AGENT_ID="your-agent-id"
+export SERVICENOW_TOKEN="$SERVICENOW_API_KEY"
+
+# Run automated test
+if ./test_servicenow_agent.sh --discovery-only; then
+    echo "✅ ServiceNow A2A agent is accessible"
+else
+    echo "❌ ServiceNow A2A agent test failed"
+    exit 1
+fi</pre>
+        </div>
+    </section>
+    
+    <section>
+        <h1>🔧 Manual Curl Examples</h1>
+        
+        <h2>Agent Discovery</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Discover agent capabilities
+curl -H "Content-Type: application/json" \
+     -H "x-sn-apikey: your-api-key" \
+     -H "User-Agent: ServiceNow-A2A-Test/1.0" \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json" | jq</pre>
+        </div>
+        
+        <h2>Send Message</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Send a message to the agent
+curl -X POST \
+     -H "Content-Type: application/json" \
+     -H "x-sn-apikey: your-api-key" \
+     -H "User-Agent: ServiceNow-A2A-Test/1.0" \
+     -d '{
+       "jsonrpc": "2.0",
+       "method": "message/send",
+       "params": {
+         "message": {
+           "role": "user",
+           "parts": [{"kind": "text", "text": "What can you help me with?"}],
+           "messageId": "unique-message-id",
+           "kind": "user"
+         },
+         "context": {"contextId": null, "taskId": null},
+         "metadata": {},
+         "pushNotificationUrl": "http://localhost:8080/callback",
+         "id": "unique-request-id"
+       },
+       "id": "unique-request-id"
+     }' \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id" | jq</pre>
+        </div>
+        
+        <h2>Debug with Verbose Output</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Get detailed request/response information
+curl -v \
+     -H "Content-Type: application/json" \
+     -H "x-sn-apikey: your-api-key" \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"</pre>
+        </div>
+    </section>
+    
+    <section>
+        <h1>🔄 Integration Patterns</h1>
+        
+        <h2>Web Application Integration</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>from flask import Flask, request, jsonify
+from generic_a2a_client import ServiceNowA2AClient
+
+app = Flask(__name__)
+
+@app.route('/chat', methods=['POST'])
+async def chat_endpoint():
+    """Web endpoint for ServiceNow A2A integration"""
+    data = request.json
+    message = data.get('message', '')
+    context_id = data.get('context_id')
+    
+    client = ServiceNowA2AClient()
+    response = await client.connect_and_send(message, context_id=context_id)
+    
+    return jsonify({
+        'response': response,
+        'context_id': response.get('result', {}).get('contextId')
+    })</pre>
+        </div>
+        
+        <h2>Batch Processing</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>async def batch_process_messages(messages):
+    """Process multiple messages efficiently"""
+    client = ServiceNowA2AClient()
+    results = []
+    
+    for message in messages:
+        try:
+            response = await client.connect_and_send(message)
+            results.append({
+                'message': message,
+                'response': response,
+                'status': 'success'
+            })
+        except Exception as e:
+            results.append({
+                'message': message,
+                'error': str(e),
+                'status': 'failed'
+            })
+    
+    return results</pre>
+        </div>
+    </section>
+    
+    <div class="nav-links">
+        <strong>Next:</strong> <a href="ServiceNow_A2A_Troubleshooting.html">Troubleshooting Guide →</a>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                button.textContent = 'Error';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

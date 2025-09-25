@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceNow A2A Testing - Troubleshooting</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #323130;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            font-weight: 300;
+        }
+        
+        .nav-links {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 10px 20px;
+            background: #0078d4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            background: #106ebe;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 8px;
+            right: 60px;
+            background: #0078d4;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #323130;
+            color: white;
+            border: 1px solid #605e5c;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #484644;
+        }
+        
+        .copy-btn.copied {
+            background: #107c10;
+            border-color: #107c10;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+        
+        .alert-error {
+            background: #fde7e9;
+            border-color: #d13438;
+            color: #8b1a1a;
+        }
+        
+        .alert-warning {
+            background: #fff4ce;
+            border-color: #ffb900;
+            color: #8a6700;
+        }
+        
+        .alert-success {
+            background: #dff6dd;
+            border-color: #107c10;
+            color: #0b5a0b;
+        }
+        
+        .alert-info {
+            background: #deecf9;
+            border-color: #0078d4;
+            color: #004578;
+        }
+        
+        h1, h2, h3 {
+            color: #323130;
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            border-bottom: 3px solid #0078d4;
+            padding-bottom: 10px;
+        }
+        
+        .inline-code {
+            background: #f3f2f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #a31621;
+        }
+        
+        .troubleshoot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .issue-card {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #d13438;
+        }
+        
+        .solution-steps {
+            background: #dff6dd;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #107c10;
+        }
+        
+        .solution-steps h4 {
+            margin-top: 0;
+            color: #0b5a0b;
+        }
+        
+        .solution-steps ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ServiceNow A2A Testing</h1>
+        <p>Troubleshooting Guide</p>
+    </div>
+    
+    <div class="nav-links">
+        <a href="ServiceNow_A2A_Examples.html">← Examples</a>
+        <a href="#current">5. Troubleshooting</a>
+        <a href="ServiceNow_A2A_Complete_Index.html">Back to Overview</a>
+    </div>
+    
+    <section>
+        <h1>🔧 Troubleshooting Guide</h1>
+        
+        <p>This guide covers common issues encountered when testing ServiceNow A2A implementations and provides step-by-step solutions.</p>
+        
+        <div class="alert alert-info">
+            <strong>Quick Debug:</strong> Always start with <span class="inline-code">./test_servicenow_agent.sh -v</span> for detailed error information.
+        </div>
+    </section>
+    
+    <section>
+        <h1>🚨 Common Issues</h1>
+        
+        <div class="troubleshoot-grid">
+            <div class="issue-card">
+                <h3>❌ Authentication Errors (401)</h3>
+                <p>API key authentication fails with "Unauthorized" error</p>
+            </div>
+            <div class="issue-card">
+                <h3>❌ Agent Not Found (404)</h3>
+                <p>Agent discovery fails with "Not Found" error</p>
+            </div>
+            <div class="issue-card">
+                <h3>❌ Connection Timeouts</h3>
+                <p>Requests timeout or fail to connect</p>
+            </div>
+            <div class="issue-card">
+                <h3>❌ Invalid JSON Response</h3>
+                <p>Malformed or unexpected response format</p>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <h1>🔐 Authentication Issues</h1>
+        
+        <div class="alert alert-error">
+            <strong>Problem:</strong> HTTP 401 Unauthorized - API key authentication fails
+        </div>
+        
+        <div class="solution-steps">
+            <h4>✅ Solutions:</h4>
+            <ol>
+                <li><strong>Verify API Key:</strong> Ensure your API key is correct and not expired</li>
+                <li><strong>Check Permissions:</strong> Confirm the API key has A2A permissions in ServiceNow</li>
+                <li><strong>Validate Instance URL:</strong> Ensure the ServiceNow instance URL is correct (without https://)</li>
+                <li><strong>Regenerate Key:</strong> Try generating a new API key in ServiceNow</li>
+                <li><strong>Test Basic Access:</strong> Verify you can access other ServiceNow APIs with the same key</li>
+            </ol>
+        </div>
+        
+        <h2>Debug Commands</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Test API key with basic ServiceNow API
+curl -H "x-sn-apikey: your-api-key" \
+     "https://your-instance.service-now.com/api/now/table/sys_user?sysparm_limit=1"
+
+# Test agent discovery with verbose output
+curl -v -H "x-sn-apikey: your-api-key" \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"</pre>
+        </div>
+        
+        <div class="alert alert-warning">
+            <strong>Note:</strong> Based on our testing, x-sn-apikey authentication works correctly with ServiceNow A2A. OAuth2 is supported but not required for basic operations.
+        </div>
+    </section>
+    
+    <section>
+        <h1>🔍 Agent Discovery Issues</h1>
+        
+        <div class="alert alert-error">
+            <strong>Problem:</strong> HTTP 404 Not Found - Agent discovery fails
+        </div>
+        
+        <div class="solution-steps">
+            <h4>✅ Solutions:</h4>
+            <ol>
+                <li><strong>Verify Agent ID:</strong> Double-check the agent ID is correct</li>
+                <li><strong>Check Agent Status:</strong> Ensure the agent is published and active in ServiceNow</li>
+                <li><strong>Validate URL Pattern:</strong> Confirm you're using the correct discovery URL format</li>
+                <li><strong>Test Agent Access:</strong> Try accessing the agent through ServiceNow UI first</li>
+            </ol>
+        </div>
+        
+        <h2>Correct URL Pattern</h2>
+        <div class="code-block" data-lang="text">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># ServiceNow A2A Discovery URL Pattern
+https://{instance}/api/sn_aia/a2a/id/{agent_id}/well_known/agent_json
+
+# Example
+https://company.service-now.com/api/sn_aia/a2a/id/138d4b97878f66100b12a75d3fbb35f8/well_known/agent_json</pre>
+        </div>
+        
+        <h2>Agent ID Location</h2>
+        <div class="solution-steps">
+            <h4>Finding Your Agent ID:</h4>
+            <ol>
+                <li>Log into your ServiceNow instance</li>
+                <li>Navigate to <strong>AI Agent Studio</strong> → <strong>Create and Manage</strong></li>
+                <li>Select the <strong>AI Agents</strong> tab</li>
+                <li>Select your desired agent</li>
+                <li>Copy the Agent ID from the URL after <span class="inline-code">agent-setup</span></li>
+            </ol>
+            <p><strong>Example URL:</strong></p>
+            <div class="code-block" data-lang="text">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>https://your-instance.service-now.com/now/agent-studio/agent-setup/9a170dc52b403a149675f1cfe291bfac/params/t/1758805747365
+
+Agent ID: 9a170dc52b403a149675f1cfe291bfac</pre>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <h1>⏱️ Connection and Timeout Issues</h1>
+        
+        <div class="alert alert-error">
+            <strong>Problem:</strong> Requests timeout or fail to connect
+        </div>
+        
+        <div class="solution-steps">
+            <h4>✅ Solutions:</h4>
+            <ol>
+                <li><strong>Check Network:</strong> Verify network connectivity to ServiceNow instance</li>
+                <li><strong>Test Instance Access:</strong> Confirm the instance URL is accessible in browser</li>
+                <li><strong>Increase Timeouts:</strong> Adjust timeout values in scripts</li>
+                <li><strong>Check Firewall:</strong> Verify no firewall or proxy blocking requests</li>
+                <li><strong>Try Different Network:</strong> Test from different network/location</li>
+            </ol>
+        </div>
+        
+        <h2>Network Debugging</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Test basic connectivity
+ping your-instance.service-now.com
+
+# Test HTTPS access
+curl -I https://your-instance.service-now.com
+
+# Test with increased timeout
+curl --connect-timeout 30 --max-time 60 \
+     -H "x-sn-apikey: your-key" \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"</pre>
+        </div>
+        
+        <h2>Python Timeout Configuration</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Increase timeout in Python client
+import httpx
+
+timeout = httpx.Timeout(60.0, connect=30.0)  # 60s total, 30s connect
+async with httpx.AsyncClient(timeout=timeout) as client:
+    # Your A2A operations here
+    pass</pre>
+        </div>
+    </section>
+    
+    <section>
+        <h1>📝 Message Format Issues</h1>
+        
+        <div class="alert alert-error">
+            <strong>Problem:</strong> Message sending fails with validation errors
+        </div>
+        
+        <div class="solution-steps">
+            <h4>✅ Key Requirements:</h4>
+            <ol>
+                <li><strong>JSON-RPC Method:</strong> Use <span class="inline-code">"message/send"</span> (not "sendMessage")</li>
+                <li><strong>Required Field:</strong> Include <span class="inline-code">"kind": "user"</span> in message object</li>
+                <li><strong>Message Parts:</strong> Use proper parts structure with text content</li>
+                <li><strong>Unique IDs:</strong> Generate unique messageId and request id</li>
+            </ol>
+        </div>
+        
+        <h2>Correct Message Format</h2>
+        <div class="code-block" data-lang="json">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>{
+  "jsonrpc": "2.0",
+  "method": "message/send",
+  "params": {
+    "message": {
+      "role": "user",
+      "parts": [
+        {
+          "kind": "text",
+          "text": "Your message here"
+        }
+      ],
+      "messageId": "unique-message-id",
+      "kind": "user"
+    },
+    "context": {
+      "contextId": null,
+      "taskId": null
+    },
+    "metadata": {},
+    "pushNotificationUrl": "http://localhost:8080/callback",
+    "id": "unique-request-id"
+  },
+  "id": "unique-request-id"
+}</pre>
+        </div>
+        
+        <div class="alert alert-warning">
+            <strong>Important:</strong> When using the A2A SDK, use <span class="inline-code">"kind": "message"</span> instead of <span class="inline-code">"kind": "user"</span> due to SDK requirements.
+        </div>
+    </section>
+    
+    <section>
+        <h1>🐍 Python-Specific Issues</h1>
+        
+        <h2>Import Errors</h2>
+        <div class="alert alert-error">
+            <strong>Problem:</strong> ModuleNotFoundError for a2a or httpx
+        </div>
+        
+        <div class="solution-steps">
+            <h4>✅ Solutions:</h4>
+            <ol>
+                <li>Install required packages: <span class="inline-code">pip install httpx a2a-sdk</span></li>
+                <li>Use virtual environment: <span class="inline-code">python -m venv venv && source venv/bin/activate</span></li>
+                <li>Check Python version: Requires Python 3.8+</li>
+            </ol>
+        </div>
+        
+        <h2>Environment Variable Issues</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Debug environment variables
+import os
+
+print("Environment check:")
+print(f"SERVICENOW_INSTANCE: {os.getenv('SERVICENOW_INSTANCE', 'NOT SET')}")
+print(f"SERVICENOW_AGENT_ID: {os.getenv('SERVICENOW_AGENT_ID', 'NOT SET')}")
+print(f"SERVICENOW_TOKEN: {'SET' if os.getenv('SERVICENOW_TOKEN') else 'NOT SET'}")
+
+# Check .env file loading
+from pathlib import Path
+env_file = Path('.env')
+print(f".env file exists: {env_file.exists()}")
+if env_file.exists():
+    print(f".env file content preview:")
+    with open(env_file) as f:
+        for i, line in enumerate(f, 1):
+            if not line.startswith('#') and '=' in line:
+                key = line.split('=')[0]
+                print(f"  Line {i}: {key}=...")
+            if i > 5:  # Show first 5 lines only
+                break</pre>
+        </div>
+    </section>
+    
+    <section>
+        <h1>🔧 Quick Debug Commands</h1>
+        
+        <h2>Test Everything</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Complete diagnostic test
+./test_servicenow_agent.sh -v
+
+# Test only discovery
+./test_servicenow_agent.sh --discovery-only
+
+# Generate manual commands
+./generate_curl_commands.sh</pre>
+        </div>
+        
+        <h2>Validate Configuration</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Check environment variables
+echo "Instance: $SERVICENOW_INSTANCE"
+echo "Agent ID: $SERVICENOW_AGENT_ID"
+echo "Token: ${SERVICENOW_TOKEN:0:15}..."
+
+# Test .env file loading
+if [ -f .env ]; then
+    echo ".env file exists"
+    grep -v '^#' .env | head -3
+else
+    echo ".env file not found"
+fi</pre>
+        </div>
+        
+        <h2>Test Network Connectivity</h2>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre># Basic connectivity test
+ping -c 3 your-instance.service-now.com
+
+# HTTPS connectivity
+curl -I --connect-timeout 10 https://your-instance.service-now.com
+
+# DNS resolution
+nslookup your-instance.service-now.com</pre>
+        </div>
+    </section>
+    
+    <div class="nav-links">
+        <strong>Completed Guide!</strong> <a href="ServiceNow_A2A_Complete_Index.html">← Back to Main Index</a>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                button.textContent = 'Error';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

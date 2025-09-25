@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="ServiceNow A2A Testing Tools" />
+  <title>ServiceNow A2A Testing - README</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ServiceNow A2A Testing - README</h1>
+<p class="author">ServiceNow A2A Testing Tools</p>
+<p class="date">September 2025</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#generic-servicenow-a2a-client"
+id="toc-generic-servicenow-a2a-client"><span
+class="toc-section-number">1</span> Generic ServiceNow A2A Client</a>
+<ul>
+<li><a href="#features" id="toc-features"><span
+class="toc-section-number">1.1</span> Features</a></li>
+<li><a href="#quick-start" id="toc-quick-start"><span
+class="toc-section-number">1.2</span> Quick Start</a>
+<ul>
+<li><a href="#install-dependencies" id="toc-install-dependencies"><span
+class="toc-section-number">1.2.1</span> 1. Install Dependencies</a></li>
+<li><a href="#configure-your-servicenow-connection"
+id="toc-configure-your-servicenow-connection"><span
+class="toc-section-number">1.2.2</span> 2. Configure Your ServiceNow
+Connection</a></li>
+<li><a href="#send-a-message" id="toc-send-a-message"><span
+class="toc-section-number">1.2.3</span> 3. Send a Message</a></li>
+</ul></li>
+<li><a href="#configuration" id="toc-configuration"><span
+class="toc-section-number">1.3</span> Configuration</a>
+<ul>
+<li><a href="#environment-variables"
+id="toc-environment-variables"><span
+class="toc-section-number">1.3.1</span> Environment Variables</a></li>
+<li><a href="#finding-your-agent-id"
+id="toc-finding-your-agent-id"><span
+class="toc-section-number">1.3.2</span> Finding Your Agent ID</a></li>
+<li><a href="#getting-an-api-key" id="toc-getting-an-api-key"><span
+class="toc-section-number">1.3.3</span> Getting an API Key</a></li>
+</ul></li>
+<li><a href="#usage-examples" id="toc-usage-examples"><span
+class="toc-section-number">1.4</span> Usage Examples</a>
+<ul>
+<li><a href="#basic-usage" id="toc-basic-usage"><span
+class="toc-section-number">1.4.1</span> Basic Usage</a></li>
+<li><a href="#advanced-usage-with-context"
+id="toc-advanced-usage-with-context"><span
+class="toc-section-number">1.4.2</span> Advanced Usage with
+Context</a></li>
+<li><a href="#step-by-step-control" id="toc-step-by-step-control"><span
+class="toc-section-number">1.4.3</span> Step-by-Step Control</a></li>
+</ul></li>
+<li><a href="#api-reference" id="toc-api-reference"><span
+class="toc-section-number">1.5</span> API Reference</a>
+<ul>
+<li><a href="#servicenowa2aclient" id="toc-servicenowa2aclient"><span
+class="toc-section-number">1.5.1</span> ServiceNowA2AClient</a></li>
+</ul></li>
+<li><a href="#error-handling" id="toc-error-handling"><span
+class="toc-section-number">1.6</span> Error Handling</a></li>
+<li><a href="#files" id="toc-files"><span
+class="toc-section-number">1.7</span> Files</a></li>
+<li><a href="#migration-from-specific-implementations"
+id="toc-migration-from-specific-implementations"><span
+class="toc-section-number">1.8</span> Migration from Specific
+Implementations</a></li>
+<li><a href="#contributing" id="toc-contributing"><span
+class="toc-section-number">1.9</span> Contributing</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="generic-servicenow-a2a-client"><span
+class="header-section-number">1</span> Generic ServiceNow A2A
+Client</h1>
+<p>A configurable Python client for connecting to any ServiceNow
+Agent-to-Agent (A2A) endpoint.</p>
+<h2 data-number="1.1" id="features"><span
+class="header-section-number">1.1</span> Features</h2>
+<ul>
+<li>✅ <strong>Generic Configuration</strong>: Works with any ServiceNow
+instance and agent</li>
+<li>✅ <strong>Multiple Configuration Methods</strong>: Environment
+variables or direct code configuration</li>
+<li>✅ <strong>Full A2A Workflow</strong>: Agent discovery, client
+initialization, and message sending</li>
+<li>✅ <strong>Error Handling</strong>: Comprehensive error handling and
+user-friendly messages</li>
+<li>✅ <strong>Conversation Context</strong>: Support for context and
+task IDs for conversation continuity</li>
+<li>✅ <strong>Easy Integration</strong>: Simple API for embedding in
+other applications</li>
+</ul>
+<h2 data-number="1.2" id="quick-start"><span
+class="header-section-number">1.2</span> Quick Start</h2>
+<h3 data-number="1.2.1" id="install-dependencies"><span
+class="header-section-number">1.2.1</span> 1. Install Dependencies</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install httpx a2a-sdk</span></code></pre></div>
+<h3 data-number="1.2.2" id="configure-your-servicenow-connection"><span
+class="header-section-number">1.2.2</span> 2. Configure Your ServiceNow
+Connection</h3>
+<p><strong>Option A: Using Environment Variables
+(Recommended)</strong></p>
+<p>Copy the template and fill in your values:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> .env.template .env</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Edit .env with your ServiceNow details</span></span></code></pre></div>
+<p><strong>Option B: Direct Configuration in Code</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> generic_a2a_client <span class="im">import</span> ServiceNowA2AClient</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> ServiceNowA2AClient(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    instance<span class="op">=</span><span class="st">&quot;your-instance.service-now.com&quot;</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    agent_id<span class="op">=</span><span class="st">&quot;your-agent-id&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    api_key<span class="op">=</span><span class="st">&quot;your-api-key&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h3 data-number="1.2.3" id="send-a-message"><span
+class="header-section-number">1.2.3</span> 3. Send a Message</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> generic_a2a_client <span class="im">import</span> ServiceNowA2AClient</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> main():</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    client <span class="op">=</span> ServiceNowA2AClient()</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> <span class="cf">await</span> client.connect_and_send(<span class="st">&quot;What can you help me with?&quot;</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(response)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>asyncio.run(main())</span></code></pre></div>
+<h2 data-number="1.3" id="configuration"><span
+class="header-section-number">1.3</span> Configuration</h2>
+<h3 data-number="1.3.1" id="environment-variables"><span
+class="header-section-number">1.3.1</span> Environment Variables</h3>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 40%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SERVICENOW_INSTANCE</code></td>
+<td>Your ServiceNow instance URL (without https://)</td>
+<td><code>company.service-now.com</code></td>
+</tr>
+<tr>
+<td><code>SERVICENOW_AGENT_ID</code></td>
+<td>The ID of the agent you want to connect to</td>
+<td><code>your-agent-id-here</code></td>
+</tr>
+<tr>
+<td><code>SERVICENOW_TOKEN</code></td>
+<td>Your ServiceNow API key</td>
+<td><code>your-api-key-here</code></td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.3.2" id="finding-your-agent-id"><span
+class="header-section-number">1.3.2</span> Finding Your Agent ID</h3>
+<ol type="1">
+<li>Log into your ServiceNow instance</li>
+<li>Navigate to <strong>Agent Intelligence</strong> &gt;
+<strong>Agents</strong></li>
+<li>Find your agent and copy its ID from the URL or agent details</li>
+</ol>
+<h3 data-number="1.3.3" id="getting-an-api-key"><span
+class="header-section-number">1.3.3</span> Getting an API Key</h3>
+<ol type="1">
+<li>In ServiceNow, go to <strong>System Web Services</strong> &gt;
+<strong>REST API Explorer</strong></li>
+<li>Or generate one in the ServiceNow Developer Portal</li>
+<li>Ensure the API key has permissions for A2A operations</li>
+</ol>
+<h2 data-number="1.4" id="usage-examples"><span
+class="header-section-number">1.4</span> Usage Examples</h2>
+<h3 data-number="1.4.1" id="basic-usage"><span
+class="header-section-number">1.4.1</span> Basic Usage</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> generic_a2a_client <span class="im">import</span> ServiceNowA2AClient</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> basic_example():</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    client <span class="op">=</span> ServiceNowA2AClient()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> <span class="cf">await</span> client.connect_and_send(<span class="st">&quot;Hello, agent!&quot;</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>asyncio.run(basic_example())</span></code></pre></div>
+<h3 data-number="1.4.2" id="advanced-usage-with-context"><span
+class="header-section-number">1.4.2</span> Advanced Usage with
+Context</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> generic_a2a_client <span class="im">import</span> ServiceNowA2AClient</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> conversation_example():</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    client <span class="op">=</span> ServiceNowA2AClient()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Start a conversation</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    response1 <span class="op">=</span> <span class="cf">await</span> client.connect_and_send(<span class="st">&quot;What services do you provide?&quot;</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Continue the conversation with context</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    context_id <span class="op">=</span> response1.get(<span class="st">&#39;result&#39;</span>, {}).get(<span class="st">&#39;contextId&#39;</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    response2 <span class="op">=</span> <span class="cf">await</span> client.connect_and_send(</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Tell me more about the first one&quot;</span>, </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        context_id<span class="op">=</span>context_id</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response1, response2</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>asyncio.run(conversation_example())</span></code></pre></div>
+<h3 data-number="1.4.3" id="step-by-step-control"><span
+class="header-section-number">1.4.3</span> Step-by-Step Control</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> httpx</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> generic_a2a_client <span class="im">import</span> ServiceNowA2AClient</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> detailed_example():</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    client <span class="op">=</span> ServiceNowA2AClient()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    timeout <span class="op">=</span> httpx.Timeout(<span class="fl">30.0</span>, <span class="ex">connect</span><span class="op">=</span><span class="fl">10.0</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">async</span> <span class="cf">with</span> httpx.AsyncClient(timeout<span class="op">=</span>timeout) <span class="im">as</span> httpx_client:</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 1: Discover the agent</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        agent_card <span class="op">=</span> <span class="cf">await</span> client.fetch_agent_card(httpx_client)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 2: Initialize the A2A client</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        a2a_client <span class="op">=</span> client.initialize_client(httpx_client)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 3: Send multiple messages</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        response1 <span class="op">=</span> <span class="cf">await</span> client.send_message(<span class="st">&quot;First message&quot;</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        response2 <span class="op">=</span> <span class="cf">await</span> client.send_message(<span class="st">&quot;Second message&quot;</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> response1, response2</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>asyncio.run(detailed_example())</span></code></pre></div>
+<h2 data-number="1.5" id="api-reference"><span
+class="header-section-number">1.5</span> API Reference</h2>
+<h3 data-number="1.5.1" id="servicenowa2aclient"><span
+class="header-section-number">1.5.1</span> ServiceNowA2AClient</h3>
+<h4 data-number="1.5.1.1" id="constructor"><span
+class="header-section-number">1.5.1.1</span> Constructor</h4>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ServiceNowA2AClient(instance<span class="op">=</span><span class="va">None</span>, agent_id<span class="op">=</span><span class="va">None</span>, api_key<span class="op">=</span><span class="va">None</span>)</span></code></pre></div>
+<p>If parameters are None, loads configuration from environment
+variables.</p>
+<h4 data-number="1.5.1.2" id="methods"><span
+class="header-section-number">1.5.1.2</span> Methods</h4>
+<h5 data-number="1.5.1.2.1"
+id="connect_and_sendmessage_text-context_idnone-task_idnone"><span
+class="header-section-number">1.5.1.2.1</span>
+<code>connect_and_send(message_text, context_id=None, task_id=None)</code></h5>
+<p>Convenience method to connect and send a message in one call.</p>
+<h5 data-number="1.5.1.2.2" id="fetch_agent_cardhttpx_client"><span
+class="header-section-number">1.5.1.2.2</span>
+<code>fetch_agent_card(httpx_client)</code></h5>
+<p>Discover and fetch the agent card from ServiceNow.</p>
+<h5 data-number="1.5.1.2.3" id="initialize_clienthttpx_client"><span
+class="header-section-number">1.5.1.2.3</span>
+<code>initialize_client(httpx_client)</code></h5>
+<p>Initialize the A2A client with the discovered agent.</p>
+<h5 data-number="1.5.1.2.4"
+id="send_messagemessage_text-context_idnone-task_idnone"><span
+class="header-section-number">1.5.1.2.4</span>
+<code>send_message(message_text, context_id=None, task_id=None)</code></h5>
+<p>Send a message to the agent.</p>
+<h2 data-number="1.6" id="error-handling"><span
+class="header-section-number">1.6</span> Error Handling</h2>
+<p>The client provides detailed error messages for common issues:</p>
+<ul>
+<li><strong>Configuration errors</strong>: Missing environment
+variables</li>
+<li><strong>Connection errors</strong>: Network or authentication
+issues</li>
+<li><strong>Agent errors</strong>: Invalid agent ID or unavailable
+agent</li>
+<li><strong>Message errors</strong>: Invalid message format or sending
+failures</li>
+</ul>
+<h2 data-number="1.7" id="files"><span
+class="header-section-number">1.7</span> Files</h2>
+<ul>
+<li><code>generic_a2a_client.py</code> - Main generic client
+implementation</li>
+<li><code>.env.template</code> - Configuration template</li>
+<li><code>README.md</code> - This documentation</li>
+</ul>
+<h2 data-number="1.8" id="migration-from-specific-implementations"><span
+class="header-section-number">1.8</span> Migration from Specific
+Implementations</h2>
+<p>If you have an existing ServiceNow A2A client, you can easily
+migrate:</p>
+<ol type="1">
+<li>Replace hardcoded instance/agent values with configuration</li>
+<li>Use the <code>ServiceNowA2AClient</code> class instead of direct
+implementation</li>
+<li>Update your <code>.env</code> file with the new variable names</li>
+</ol>
+<h2 data-number="1.9" id="contributing"><span
+class="header-section-number">1.9</span> Contributing</h2>
+<p>Feel free to submit issues and enhancement requests!</p>
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceNow A2A Testing - Overview & Quick Start</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #323130;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            font-weight: 300;
+        }
+        
+        .nav-links {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 10px 20px;
+            background: #0078d4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            background: #106ebe;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .feature-card {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0078d4;
+        }
+        
+        .feature-card h3 {
+            color: #323130;
+            margin-top: 0;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 8px;
+            right: 60px;
+            background: #0078d4;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #323130;
+            color: white;
+            border: 1px solid #605e5c;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #484644;
+        }
+        
+        .copy-btn.copied {
+            background: #107c10;
+            border-color: #107c10;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+        
+        .alert-info {
+            background: #deecf9;
+            border-color: #0078d4;
+            color: #004578;
+        }
+        
+        .alert-success {
+            background: #dff6dd;
+            border-color: #107c10;
+            color: #0b5a0b;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            padding: 15px;
+            background: #faf9f8;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            background: #0078d4;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            margin-right: 15px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-content h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #323130;
+        }
+        
+        h1, h2, h3 {
+            color: #323130;
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            border-bottom: 3px solid #0078d4;
+            padding-bottom: 10px;
+        }
+        
+        .inline-code {
+            background: #f3f2f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #a31621;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ServiceNow A2A Testing</h1>
+        <p>Overview & Quick Start Guide</p>
+    </div>
+    
+    <div class="nav-links">
+        <strong>📚 Complete Guide Series:</strong><br>
+        <a href="#current">1. Overview & Quick Start</a>
+        <a href="ServiceNow_A2A_Python_Client.html">2. Python Client</a>
+        <a href="ServiceNow_A2A_Bash_Scripts.html">3. Bash Scripts</a>
+        <a href="ServiceNow_A2A_Examples.html">4. Examples</a>
+        <a href="ServiceNow_A2A_Troubleshooting.html">5. Troubleshooting</a>
+    </div>
+    
+    <section>
+        <h1>🎯 Overview</h1>
+        
+        <p>This comprehensive toolkit provides everything needed to test ServiceNow Agent-to-Agent (A2A) implementations. It includes robust tools, detailed instructions, and troubleshooting guides that work with <strong>any ServiceNow instance and agent</strong>.</p>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>🔧 Universal Compatibility</h3>
+                <p>Works with any ServiceNow instance and agent. No hardcoded values or dependencies.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🛠️ Multiple Testing Methods</h3>
+                <p>Python SDK, direct HTTP calls, and curl commands for different scenarios.</p>
+            </div>
+            <div class="feature-card">
+                <h3>📚 Complete Documentation</h3>
+                <p>Step-by-step instructions, code examples, and troubleshooting guides.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🚀 Robust Implementation</h3>
+                <p>Comprehensive error handling, configuration management, and conversation context support.</p>
+            </div>
+        </div>
+        
+        <div class="alert alert-info">
+            <strong>What's Included:</strong> Python A2A client, automated testing scripts, curl command generators, configuration templates, and comprehensive documentation.
+        </div>
+    </section>
+    
+    <section>
+        <h1>🚀 Quick Start</h1>
+        
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h3>Install Dependencies</h3>
+                <p>Install the required Python packages:</p>
+                <div class="code-block" data-lang="bash">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>pip install httpx a2a-sdk</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h3>Configure Environment</h3>
+                <p>Create a <span class="inline-code">.env</span> file with your ServiceNow details:</p>
+                <div class="code-block" data-lang="env">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre># ServiceNow A2A Client Configuration Template
+# Copy this file to .env and fill in your values
+
+# ServiceNow Instance (without https://)
+# Example: your-company.service-now.com
+SERVICENOW_INSTANCE=your-instance.service-now.com
+
+# ServiceNow Agent ID
+# This is the unique identifier for the agent you want to connect to
+# You can find this in the ServiceNow agent configuration
+SERVICENOW_AGENT_ID=your-agent-id-here
+
+# ServiceNow API Key
+# Generate this in ServiceNow under System Web Services > REST API Explorer
+# or in the ServiceNow developer portal
+SERVICENOW_TOKEN=your-api-key-here</pre>
+                <h3>Run Quick Test</h3>
+                <p>Test your configuration with the automated script:</p>
+                <div class="code-block" data-lang="bash">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>./test_servicenow_agent.sh</pre>
+                </div>
+                <p>Or test with Python:</p>
+                <div class="code-block" data-lang="bash">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>python generic_a2a_client.py</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="alert alert-success">
+            <strong>Success!</strong> If the test passes, your ServiceNow A2A agent is working correctly and ready for integration.
+        </div>
+    </section>
+    
+    <section>
+        <h1>⚙️ Configuration Details</h1>
+        
+        <h2>Environment Variables</h2>
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #edebe9;">
+            <thead>
+                <tr style="background: #0078d4; color: white;">
+                    <th style="padding: 12px; text-align: left;">Variable</th>
+                    <th style="padding: 12px; text-align: left;">Description</th>
+                    <th style="padding: 12px; text-align: left;">Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 1px solid #edebe9;">
+                    <td style="padding: 12px;"><span class="inline-code">SERVICENOW_INSTANCE</span></td>
+                    <td style="padding: 12px;">Your ServiceNow instance URL (without https://)</td>
+                    <td style="padding: 12px;">company.service-now.com</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #edebe9;">
+                    <td style="padding: 12px;"><span class="inline-code">SERVICENOW_AGENT_ID</span></td>
+                    <td style="padding: 12px;">The ID of the agent you want to connect to</td>
+                    <td style="padding: 12px;">your-agent-id-here</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #edebe9;">
+                    <td style="padding: 12px;"><span class="inline-code">SERVICENOW_TOKEN</span></td>
+                    <td style="padding: 12px;">Your ServiceNow API key</td>
+                    <td style="padding: 12px;">your-api-key-here</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>Finding Your Agent ID</h2>
+        <ol>
+            <li>Log into your ServiceNow instance</li>
+            <li>Navigate to <strong>AI Agent Studio</strong> → <strong>Create and Manage</strong></li>
+            <li>Select the <strong>AI Agents</strong> tab</li>
+            <li>Select your desired agent</li>
+            <li>Copy the Agent ID from the URL after <span class="inline-code">agent-setup</span></li>
+        </ol>
+        <p><strong>Example:</strong> In URL <span class="inline-code">https://your-instance.service-now.com/now/agent-studio/agent-setup/9a170dc52b403a149675f1cfe291bfac/params/...</span><br>
+        Agent ID is: <span class="inline-code">9a170dc52b403a149675f1cfe291bfac</span></p>
+        
+        <h2>Generating an API Key</h2>
+        <ol>
+            <li>In ServiceNow, navigate to <strong>System Web Services</strong> → <strong>API Access Policies</strong> → <strong>REST API Key</strong></li>
+            <li>Create a new API Key</li>
+            <li>Assign it to the <strong>a2aauthscope</strong> scope</li>
+            <li>Save and copy the generated API key</li>
+        </ol>
+        
+        <h2>Configuring API Key Access for A2A</h2>
+        <p>To allow your API Key to access the A2A API, you need to configure authentication profiles:</p>
+        
+        <h3>Step 1: Create API Key Authentication Profile</h3>
+        <ol>
+            <li>Go to <strong>System Web Services</strong> → <strong>API Access Policies</strong> → <strong>Inbound Authentication Profile</strong></li>
+            <li>Select <strong>Create API Key authentication profiles</strong></li>
+            <li>Provide a name for your profile</li>
+            <li>Select <strong>Header</strong> for API Key for auth parameter field</li>
+            <li>Save the profile</li>
+        </ol>
+        
+        <h3>Step 2: Add Profile to A2A API Access Policy</h3>
+        <ol>
+            <li>Go to <strong>System Web Services</strong> → <strong>API Access Policies</strong> → <strong>REST API Access Policies</strong></li>
+            <li>Select <strong>AI Agent A2A API Access Policy</strong></li>
+            <li>Add your newly created API Key profile to the list of <strong>Inbound authentication profiles</strong></li>
+            <li>Save the policy</li>
+        </ol>
+    </section>
+    
+    <div class="nav-links">
+        <strong>Next:</strong> <a href="ServiceNow_A2A_Python_Client.html">Python Client Guide →</a>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                button.textContent = 'Error';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

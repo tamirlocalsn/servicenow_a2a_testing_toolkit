@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceNow A2A Testing - Python Client</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #323130;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            font-weight: 300;
+        }
+        
+        .nav-links {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 10px 20px;
+            background: #0078d4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            background: #106ebe;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 8px;
+            right: 60px;
+            background: #0078d4;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #323130;
+            color: white;
+            border: 1px solid #605e5c;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #484644;
+        }
+        
+        .copy-btn.copied {
+            background: #107c10;
+            border-color: #107c10;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+        
+        .alert-info {
+            background: #deecf9;
+            border-color: #0078d4;
+            color: #004578;
+        }
+        
+        h1, h2, h3 {
+            color: #323130;
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            border-bottom: 3px solid #0078d4;
+            padding-bottom: 10px;
+        }
+        
+        .inline-code {
+            background: #f3f2f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #a31621;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ServiceNow A2A Testing</h1>
+        <p>Python Client Guide</p>
+    </div>
+    
+    <div class="nav-links">
+        <a href="ServiceNow_A2A_Overview.html">← Overview</a>
+        <a href="#current">2. Python Client</a>
+        <a href="ServiceNow_A2A_Bash_Scripts.html">3. Bash Scripts →</a>
+    </div>
+    
+    <section>
+        <h1>🐍 Python A2A Client</h1>
+        
+        <p>The generic Python client provides a robust interface for ServiceNow A2A integration. It handles authentication, agent discovery, message sending, and conversation context automatically.</p>
+        
+        <div class="alert alert-info">
+            <strong>Key Features:</strong> Automatic agent discovery, conversation context support, comprehensive error handling, and works with any ServiceNow instance.
+        </div>
+    </section>
+    
+    <section>
+        <h1>📝 Complete Source Code</h1>
+        
+        <p>Save this as <span class="inline-code">generic_a2a_client.py</span>:</p>
+        
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>#!/usr/bin/env python3
+"""
+Generic ServiceNow A2A Client
+
+A configurable client for connecting to any ServiceNow Agent-to-Agent (A2A) endpoint.
+Supports both environment variables and direct configuration.
+
+Usage:
+    # Using environment variables
+    export SERVICENOW_INSTANCE="your-instance.service-now.com"
+    export SERVICENOW_AGENT_ID="your-agent-id"
+    export SERVICENOW_TOKEN="your-api-key"
+    python generic_a2a_client.py
+
+    # Or configure directly in code
+    client = ServiceNowA2AClient(
+        instance="your-instance.service-now.com",
+        agent_id="your-agent-id", 
+        api_key="your-api-key"
+    )
+    await client.send_message("Your message here")
+"""
+
+import asyncio
+from uuid import uuid4
+import httpx 
+import os
+from pathlib import Path
+from typing import Optional, Dict, Any
+from dataclasses import dataclass
+
+# Load environment variables from .env file if it exists
+env_file = Path(__file__).parent / '.env'
+if env_file.exists():
+    with open(env_file) as f:
+        for line in f:
+            if line.strip() and not line.startswith('#'):
+                key, value = line.strip().split('=', 1)
+                os.environ[key] = value
+
+from a2a.client import A2AClient
+from a2a.types import (
+    AgentCard,
+    SendMessageRequest,
+    MessageSendParams,
+)
+
+
+@dataclass
+class ServiceNowConfig:
+    """Configuration for ServiceNow A2A client"""
+    instance: str  # e.g., "your-instance.service-now.com"
+    agent_id: str  # ServiceNow agent ID
+    api_key: str   # ServiceNow API key
+    
+    @property
+    def base_url(self) -> str:
+        """Base URL for A2A API"""
+        return f"https://{self.instance}/api/sn_aia/a2a/id"
+    
+    @property
+    def discovery_url(self) -> str:
+        """Agent discovery URL"""
+        return f"{self.base_url}/{self.agent_id}/well_known/agent_json"
+    
+    @classmethod
+    def from_env(cls) -> 'ServiceNowConfig':
+        """Create configuration from environment variables"""
+        instance = os.getenv("SERVICENOW_INSTANCE")
+        agent_id = os.getenv("SERVICENOW_AGENT_ID") 
+        api_key = os.getenv("SERVICENOW_TOKEN")
+        
+        if not instance:
+            raise ValueError("SERVICENOW_INSTANCE environment variable is required")
+        if not agent_id:
+            raise ValueError("SERVICENOW_AGENT_ID environment variable is required")
+        if not api_key:
+            raise ValueError("SERVICENOW_TOKEN environment variable is required")
+            
+        return cls(instance=instance, agent_id=agent_id, api_key=api_key)
+
+
+class ServiceNowA2AClient:
+    """Generic ServiceNow A2A Client"""
+    
+    def __init__(self, instance: str = None, agent_id: str = None, api_key: str = None):
+        """
+        Initialize the ServiceNow A2A client
+        
+        Args:
+            instance: ServiceNow instance (e.g., "your-instance.service-now.com")
+            agent_id: ServiceNow agent ID
+            api_key: ServiceNow API key
+            
+        If parameters are None, will attempt to load from environment variables.
+        """
+        if instance and agent_id and api_key:
+            self.config = ServiceNowConfig(instance=instance, agent_id=agent_id, api_key=api_key)
+        else:
+            self.config = ServiceNowConfig.from_env()
+        
+        self.agent_card: Optional[AgentCard] = None
+        self.a2a_client: Optional[A2AClient] = None
+    
+    async def fetch_agent_card(self, httpx_client: httpx.AsyncClient) -> AgentCard:
+        """Fetch agent card from ServiceNow discovery endpoint"""
+        try:
+            print(f"🔍 Discovering agent at: {self.config.instance}")
+            print(f"📋 Agent ID: {self.config.agent_id}")
+            print(f"🌐 Discovery URL: {self.config.discovery_url}")
+            
+            headers = {
+                'content-type': 'application/json',
+                'x-sn-apikey': self.config.api_key,
+                'user-agent': 'ServiceNow-A2A-Client/1.0'
+            }
+            
+            response = await httpx_client.get(self.config.discovery_url, headers=headers)
+            response.raise_for_status()
+            
+            agent_card_data = response.json()
+            agent_card = AgentCard(**agent_card_data)
+            
+            print("✅ Agent discovered successfully!")
+            print(f"📝 Name: {agent_card.name}")
+            print(f"📄 Description: {agent_card.description}")
+            print(f"🔗 Invocation URL: {agent_card.url}")
+            
+            self.agent_card = agent_card
+            return agent_card
+
+        except httpx.HTTPStatusError as e:
+            print(f"❌ HTTP Error {e.response.status_code}: {e.response.text}")
+            raise RuntimeError(f"Failed to fetch agent card: HTTP {e.response.status_code}")
+        except Exception as e:
+            print(f"❌ Error fetching agent card: {e}")
+            raise RuntimeError(f"Failed to fetch agent card: {e}")
+
+    def initialize_client(self, httpx_client: httpx.AsyncClient) -> A2AClient:
+        """Initialize A2A client with the discovered agent card"""
+        if not self.agent_card:
+            raise RuntimeError("Agent card not fetched. Call fetch_agent_card() first.")
+        
+        client = A2AClient(
+            httpx_client=httpx_client, 
+            agent_card=self.agent_card
+        )
+        print("✅ A2A Client initialized")
+        
+        self.a2a_client = client
+        return client
+
+    def create_message_body(self, message_text: str, context_id: str = None, task_id: str = None) -> Dict[str, Any]:
+        """
+        Create message body for ServiceNow A2A communication
+        
+        Args:
+            message_text: The message to send to the agent
+            context_id: Optional context ID for conversation continuity
+            task_id: Optional task ID for task tracking
+        """
+        request_id = uuid4().hex
+        message_id = uuid4().hex
+        
+        message_body = {
+            'message': {
+                'role': 'user',
+                'parts': [
+                    {'kind': 'text', 'text': message_text}
+                ],
+                'messageId': message_id,
+                'kind': 'message'  # SDK expects 'message'
+            },
+            'context': {
+                'contextId': context_id,
+                'taskId': task_id
+            },
+            'metadata': {},
+            'pushNotificationUrl': f"http://localhost:8080/a2a/callback/{self.config.agent_id}/{request_id}",
+            'id': request_id
+        }
+
+        return message_body
+
+    async def send_message(self, message_text: str, context_id: str = None, task_id: str = None) -> Dict[str, Any]:
+        """
+        Send a message to the ServiceNow agent
+        
+        Args:
+            message_text: The message to send
+            context_id: Optional context ID for conversation continuity
+            task_id: Optional task ID for task tracking
+            
+        Returns:
+            The agent's response as a dictionary
+        """
+        if not self.a2a_client:
+            raise RuntimeError("A2A client not initialized. Call initialize_client() first.")
+        
+        print(f"💬 Sending message: {message_text}")
+        
+        message_body = self.create_message_body(message_text, context_id, task_id)
+        
+        request = SendMessageRequest(
+            id=str(uuid4()), 
+            params=MessageSendParams(**message_body)
+        )
+
+        try:
+            response = await self.a2a_client.send_message(request)
+            print("✅ Message sent successfully!")
+            
+            # Extract and display agent response in a user-friendly way
+            if hasattr(response, 'result') and response.result:
+                result = response.result
+                if hasattr(result, 'status') and result.status:
+                    status = result.status
+                    if hasattr(status, 'message') and status.message:
+                        message = status.message
+                        if hasattr(message, 'parts') and message.parts:
+                            print("\n🤖 Agent Response:")
+                            for part in message.parts:
+                                if hasattr(part, 'text'):
+                                    print(f"   {part.text}")
+                            print()
+            
+            return response.model_dump(mode='json', exclude_none=True)
+            
+        except Exception as e:
+            print(f"❌ Error sending message: {e}")
+            raise
+
+    async def connect_and_send(self, message_text: str, context_id: str = None, task_id: str = None) -> Dict[str, Any]:
+        """
+        Convenience method to connect to agent and send a message in one call
+        
+        Args:
+            message_text: The message to send
+            context_id: Optional context ID for conversation continuity
+            task_id: Optional task ID for task tracking
+            
+        Returns:
+            The agent's response as a dictionary
+        """
+        timeout = httpx.Timeout(30.0, connect=10.0)
+        
+        async with httpx.AsyncClient(timeout=timeout) as httpx_client:
+            await self.fetch_agent_card(httpx_client)
+            self.initialize_client(httpx_client)
+            return await self.send_message(message_text, context_id, task_id)
+
+
+async def main():
+    """Example usage of the generic ServiceNow A2A client"""
+    print("=== Generic ServiceNow A2A Client ===")
+    
+    try:
+        # Option 1: Use environment variables
+        client = ServiceNowA2AClient()
+        
+        # Option 2: Direct configuration (uncomment to use)
+        # client = ServiceNowA2AClient(
+        #     instance="your-instance.service-now.com",
+        #     agent_id="your-agent-id",
+        #     api_key="your-api-key"
+        # )
+        
+        print(f"🏢 Instance: {client.config.instance}")
+        print(f"🤖 Agent ID: {client.config.agent_id}")
+        print(f"🔑 API Key: {client.config.api_key[:15]}...")
+        
+        # Send a message to the agent
+        message = "What can you help me with?"
+        response = await client.connect_and_send(message)
+        
+        print("\n✅ A2A Client completed successfully!")
+        
+    except ValueError as e:
+        print(f"❌ Configuration Error: {e}")
+        print("\nRequired environment variables:")
+        print("  SERVICENOW_INSTANCE=your-instance.service-now.com")
+        print("  SERVICENOW_AGENT_ID=your-agent-id")
+        print("  SERVICENOW_TOKEN=your-api-key")
+        
+    except Exception as e:
+        print(f"❌ A2A Client failed: {e}")
+        print(f"Error type: {type(e).__name__}")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())</pre>
+        </div>
+    </section>
+    
+    <section>
+        <h1>💡 Usage Examples</h1>
+        
+        <h2>Basic Usage</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>import asyncio
+from generic_a2a_client import ServiceNowA2AClient
+
+async def main():
+    client = ServiceNowA2AClient()
+    response = await client.connect_and_send("What can you help me with?")
+    print(response)
+
+asyncio.run(main())</div>
+        
+        <h2>Direct Configuration</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>client = ServiceNowA2AClient(
+    instance="your-instance.service-now.com",
+    agent_id="your-agent-id",
+    api_key="your-api-key"
+)
+
+response = await client.connect_and_send("How can you assist me?")</pre>
+        </div>
+        
+        <h2>Conversation with Context</h2>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>async def conversation_example():
+    client = ServiceNowA2AClient()
+    
+    # First message
+    response1 = await client.connect_and_send("What topics do you cover?")
+    
+    # Extract context for follow-up
+    context_id = response1.get('result', {}).get('contextId')
+    
+    # Follow-up message with context
+    response2 = await client.connect_and_send(
+        "Tell me more about the first topic",
+        context_id=context_id
+    )
+    
+    return response1, response2</pre>
+        </div>
+    </section>
+    
+    <div class="nav-links">
+        <strong>Next:</strong> <a href="ServiceNow_A2A_Bash_Scripts.html">Bash Scripts Guide →</a>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                button.textContent = 'Error';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

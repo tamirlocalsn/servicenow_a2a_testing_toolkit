@@ -1,0 +1,68 @@
+# GitHub Pages Configuration for ServiceNow A2A Testing Toolkit
+
+title: ServiceNow A2A Testing Toolkit
+description: A comprehensive testing toolkit for ServiceNow Agent-to-Agent (A2A) implementations
+url: "https://[username].github.io"
+baseurl: "/[repository-name]"
+
+# Theme
+theme: minima
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Include HTML files for GitHub Pages
+include:
+  - "*.html"
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Navigation
+navigation:
+  - title: "Overview"
+    url: "/ServiceNow_A2A_Complete_Index.html"
+  - title: "Python Client"
+    url: "/ServiceNow_A2A_Python_Client.html"
+  - title: "Bash Scripts"
+    url: "/ServiceNow_A2A_Bash_Scripts.html"
+  - title: "Examples"
+    url: "/ServiceNow_A2A_Examples.html"
+  - title: "Troubleshooting"
+    url: "/ServiceNow_A2A_Troubleshooting.html"
+
+# SEO
+author: ServiceNow A2A Testing Toolkit
+twitter:
+  username: 
+  card: summary
+
+# Google Analytics (optional)
+# google_analytics: 
+
+# Social links
+github_username: [username]

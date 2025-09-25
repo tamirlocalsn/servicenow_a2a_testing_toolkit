@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceNow A2A Testing - Bash Scripts</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #323130;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            font-weight: 300;
+        }
+        
+        .nav-links {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 10px 20px;
+            background: #0078d4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            background: #106ebe;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 8px;
+            right: 60px;
+            background: #0078d4;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #323130;
+            color: white;
+            border: 1px solid #605e5c;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #484644;
+        }
+        
+        .copy-btn.copied {
+            background: #107c10;
+            border-color: #107c10;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+        
+        .alert-info {
+            background: #deecf9;
+            border-color: #0078d4;
+            color: #004578;
+        }
+        
+        .alert-success {
+            background: #dff6dd;
+            border-color: #107c10;
+            color: #0b5a0b;
+        }
+        
+        h1, h2, h3 {
+            color: #323130;
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            border-bottom: 3px solid #0078d4;
+            padding-bottom: 10px;
+        }
+        
+        .inline-code {
+            background: #f3f2f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #a31621;
+        }
+        
+        .usage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .usage-card {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0078d4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ServiceNow A2A Testing</h1>
+        <p>Bash Scripts Guide</p>
+    </div>
+    
+    <div class="nav-links">
+        <a href="ServiceNow_A2A_Python_Client.html">← Python Client</a>
+        <a href="#current">3. Bash Scripts</a>
+        <a href="ServiceNow_A2A_Examples.html">4. Examples →</a>
+    </div>
+    
+    <section>
+        <h1>📜 Bash Testing Scripts</h1>
+        
+        <p>The bash scripts provide automated testing capabilities using curl commands. They're perfect for quick validation, automated testing, and debugging ServiceNow A2A implementations.</p>
+        
+        <div class="alert alert-info">
+            <strong>Key Features:</strong> Automated discovery and testing, configurable parameters, detailed error reporting, and manual curl command generation.
+        </div>
+    </section>
+    
+    <section>
+        <h1>🔧 Automated Testing Script</h1>
+        
+        <p>Save this as <span class="inline-code">test_servicenow_agent.sh</span>:</p>
+        
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>#!/bin/bash
+
+# ServiceNow A2A Agent Test Script
+# This script generates and executes curl commands to test any ServiceNow agent
+
+set -e
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+print_status() { echo -e "${BLUE}[INFO]${NC} $1"; }
+print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+
+# Load configuration from .env file if it exists
+if [ -f .env ]; then
+    print_status "Loading configuration from .env file..."
+    export $(grep -v '^#' .env | xargs)
+fi
+
+# Configuration variables
+SERVICENOW_INSTANCE=${SERVICENOW_INSTANCE:-""}
+SERVICENOW_AGENT_ID=${SERVICENOW_AGENT_ID:-""}
+SERVICENOW_TOKEN=${SERVICENOW_TOKEN:-""}
+
+# Parse command line arguments
+CUSTOM_MESSAGE=""
+DISCOVERY_ONLY=false
+VERBOSE=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -i|--instance) SERVICENOW_INSTANCE="$2"; shift 2 ;;
+        -a|--agent-id) SERVICENOW_AGENT_ID="$2"; shift 2 ;;
+        -t|--token) SERVICENOW_TOKEN="$2"; shift 2 ;;
+        -m|--message) CUSTOM_MESSAGE="$2"; shift 2 ;;
+        -d|--discovery-only) DISCOVERY_ONLY=true; shift ;;
+        -v|--verbose) VERBOSE=true; shift ;;
+        -h|--help)
+            echo "Usage: $0 [OPTIONS]"
+            echo "Test a ServiceNow A2A agent using curl commands"
+            echo ""
+            echo "Options:"
+            echo "  -i, --instance INSTANCE    ServiceNow instance"
+            echo "  -a, --agent-id AGENT_ID    Agent ID"
+            echo "  -t, --token TOKEN          API token"
+            echo "  -m, --message MESSAGE      Custom message"
+            echo "  -d, --discovery-only       Only test discovery"
+            echo "  -v, --verbose              Verbose output"
+            echo "  -h, --help                 Show this help"
+            exit 0 ;;
+        *) print_error "Unknown option: $1"; exit 1 ;;
+    esac
+done
+
+# Validate required configuration
+if [ -z "$SERVICENOW_INSTANCE" ] || [ -z "$SERVICENOW_AGENT_ID" ] || [ -z "$SERVICENOW_TOKEN" ]; then
+    print_error "Missing required configuration"
+    echo "Required: SERVICENOW_INSTANCE, SERVICENOW_AGENT_ID, SERVICENOW_TOKEN"
+    echo "Set these in .env file or use command line options"
+    exit 1
+fi
+
+# Set default message
+if [ -z "$CUSTOM_MESSAGE" ]; then
+    CUSTOM_MESSAGE="Hello! This is a test message. What can you help me with?"
+fi
+
+# Build URLs
+BASE_URL="https://${SERVICENOW_INSTANCE}/api/sn_aia/a2a/id"
+DISCOVERY_URL="${BASE_URL}/${SERVICENOW_AGENT_ID}/well_known/agent_json"
+INVOCATION_URL="https://${SERVICENOW_INSTANCE}/api/sn_aia/a2a/v1/agent/id/${SERVICENOW_AGENT_ID}"
+
+print_status "ServiceNow A2A Agent Test"
+echo "=================================="
+echo "Instance: $SERVICENOW_INSTANCE"
+echo "Agent ID: $SERVICENOW_AGENT_ID"
+echo "API Key:  ${SERVICENOW_TOKEN:0:15}..."
+echo "Message:  $CUSTOM_MESSAGE"
+echo "=================================="
+
+# Test 1: Agent Discovery
+print_status "Step 1: Testing agent discovery..."
+
+DISCOVERY_RESPONSE=$(curl -s -w "\n%{http_code}" \
+    -H "Content-Type: application/json" \
+    -H "x-sn-apikey: $SERVICENOW_TOKEN" \
+    -H "User-Agent: ServiceNow-A2A-Test/1.0" \
+    "$DISCOVERY_URL")
+
+# Extract HTTP status code (last line) and response body
+HTTP_STATUS=$(echo "$DISCOVERY_RESPONSE" | tail -n 1)
+DISCOVERY_BODY=$(echo "$DISCOVERY_RESPONSE" | sed '$d')
+
+if [ "$HTTP_STATUS" = "200" ]; then
+    print_success "Agent discovery successful!"
+    
+    # Extract agent name using python if available
+    AGENT_NAME=$(echo "$DISCOVERY_BODY" | python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('name', 'Unknown'))" 2>/dev/null || echo "Unknown")
+    AGENT_DESC=$(echo "$DISCOVERY_BODY" | python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('description', '')[:100] + '...' if len(data.get('description', '')) > 100 else data.get('description', ''))" 2>/dev/null || echo "")
+    
+    echo "  Agent Name: $AGENT_NAME"
+    if [ -n "$AGENT_DESC" ]; then
+        echo "  Description: $AGENT_DESC"
+    fi
+    
+    if [ "$VERBOSE" = true ]; then
+        echo ""
+        print_status "Full agent card response:"
+        echo "$DISCOVERY_BODY" | python3 -m json.tool 2>/dev/null || echo "$DISCOVERY_BODY"
+    fi
+else
+    print_error "Agent discovery failed! HTTP Status: $HTTP_STATUS"
+    echo "Response: $DISCOVERY_BODY"
+    exit 1
+fi
+
+# Exit if discovery-only mode
+if [ "$DISCOVERY_ONLY" = true ]; then
+    print_success "Discovery-only mode completed successfully!"
+    exit 0
+fi
+
+# Test 2: Send Message
+print_status "Step 2: Sending test message to agent..."
+
+REQUEST_ID=$(uuidgen | tr '[:upper:]' '[:lower:]' | tr -d '-')
+MESSAGE_ID=$(uuidgen | tr '[:upper:]' '[:lower:]' | tr -d '-')
+
+JSON_PAYLOAD=$(cat <<EOF
+{
+  "jsonrpc": "2.0",
+  "method": "message/send",
+  "params": {
+    "message": {
+      "role": "user",
+      "parts": [
+        {
+          "kind": "text",
+          "text": "$CUSTOM_MESSAGE"
+        }
+      ],
+      "messageId": "$MESSAGE_ID",
+      "kind": "user"
+    },
+    "context": {
+      "contextId": null,
+      "taskId": null
+    },
+    "metadata": {},
+    "pushNotificationUrl": "http://localhost:8080/a2a/callback/test/$REQUEST_ID",
+    "id": "$REQUEST_ID"
+  },
+  "id": "$REQUEST_ID"
+}
+EOF
+)
+
+MESSAGE_RESPONSE=$(curl -s -w "\n%{http_code}" \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "x-sn-apikey: $SERVICENOW_TOKEN" \
+    -H "User-Agent: ServiceNow-A2A-Test/1.0" \
+    -d "$JSON_PAYLOAD" \
+    "$INVOCATION_URL")
+
+# Extract HTTP status code (last line) and response body
+HTTP_STATUS=$(echo "$MESSAGE_RESPONSE" | tail -n 1)
+MESSAGE_BODY=$(echo "$MESSAGE_RESPONSE" | sed '$d')
+
+if [ "$HTTP_STATUS" = "200" ]; then
+    print_success "Message sent successfully!"
+    
+    # Extract agent response using python if available
+    AGENT_RESPONSES=$(echo "$MESSAGE_BODY" | python3 -c "
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    result = data.get('result', {})
+    status = result.get('status', {})
+    message = status.get('message', {})
+    parts = message.get('parts', [])
+    
+    for i, part in enumerate(parts):
+        if part.get('kind') == 'text':
+            print(f'Response {i+1}: {part.get(\"text\", \"\")}')
+except:
+    print('Could not parse agent response')
+" 2>/dev/null)
+
+    if [ -n "$AGENT_RESPONSES" ]; then
+        echo ""
+        print_status "Agent Response:"
+        echo "$AGENT_RESPONSES"
+    fi
+    
+    if [ "$VERBOSE" = true ]; then
+        echo ""
+        print_status "Full response:"
+        echo "$MESSAGE_BODY" | python3 -m json.tool 2>/dev/null || echo "$MESSAGE_BODY"
+    fi
+else
+    print_error "Message sending failed! HTTP Status: $HTTP_STATUS"
+    echo "Response: $MESSAGE_BODY"
+    exit 1
+fi
+
+print_success "All tests completed successfully!"
+
+# Generate manual curl commands for reference
+echo ""
+print_status "Manual curl commands for reference:"
+echo ""
+echo "# Discovery:"
+echo "curl -H \"Content-Type: application/json\" -H \"x-sn-apikey: $SERVICENOW_TOKEN\" -H \"User-Agent: ServiceNow-A2A-Test/1.0\" \"$DISCOVERY_URL\""
+echo ""
+echo "# Send Message:"
+echo "curl -X POST -H \"Content-Type: application/json\" -H \"x-sn-apikey: $SERVICENOW_TOKEN\" -H \"User-Agent: ServiceNow-A2A-Test/1.0\" -d '$JSON_PAYLOAD' \"$INVOCATION_URL\""</pre>
+        </div>
+        
+        <h2>Usage Examples</h2>
+        <div class="usage-grid">
+            <div class="usage-card">
+                <h3>Basic Test</h3>
+                <div class="code-block" data-lang="bash">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre># Use .env configuration
+./test_servicenow_agent.sh</pre>
+                </div>
+            </div>
+            <div class="usage-card">
+                <h3>Custom Message</h3>
+                <div class="code-block" data-lang="bash">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre># Test with custom message
+./test_servicenow_agent.sh -m "What services do you provide?"</pre>
+                </div>
+            </div>
+            <div class="usage-card">
+                <h3>Discovery Only</h3>
+                <div class="code-block" data-lang="bash">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre># Test only agent discovery
+./test_servicenow_agent.sh --discovery-only</pre>
+                </div>
+            </div>
+            <div class="usage-card">
+                <h3>Verbose Output</h3>
+                <div class="code-block" data-lang="bash">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre># Detailed output for debugging
+./test_servicenow_agent.sh -v</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <h1>🔄 Curl Command Generator</h1>
+        
+        <p>Save this as <span class="inline-code">generate_curl_commands.sh</span>:</p>
+        
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>#!/bin/bash
+
+# ServiceNow A2A Curl Command Generator
+# Generates ready-to-use curl commands for testing ServiceNow agents
+
+set -e
+
+# Color codes
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+print_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
+print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+print_warning() { echo -e "${YELLOW}[NOTE]${NC} $1"; }
+
+# Load configuration from .env file if it exists
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+fi
+
+# Configuration
+SERVICENOW_INSTANCE=${SERVICENOW_INSTANCE:-"your-instance.service-now.com"}
+SERVICENOW_AGENT_ID=${SERVICENOW_AGENT_ID:-"your-agent-id"}
+SERVICENOW_TOKEN=${SERVICENOW_TOKEN:-"your-api-key"}
+
+# Parse command line arguments
+CUSTOM_MESSAGE="What can you help me with?"
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -i|--instance) SERVICENOW_INSTANCE="$2"; shift 2 ;;
+        -a|--agent-id) SERVICENOW_AGENT_ID="$2"; shift 2 ;;
+        -t|--token) SERVICENOW_TOKEN="$2"; shift 2 ;;
+        -m|--message) CUSTOM_MESSAGE="$2"; shift 2 ;;
+        -h|--help)
+            echo "Usage: $0 [OPTIONS]"
+            echo "Generate curl commands for testing ServiceNow A2A agents"
+            echo ""
+            echo "Options:"
+            echo "  -i, --instance INSTANCE    ServiceNow instance"
+            echo "  -a, --agent-id AGENT_ID    Agent ID"
+            echo "  -t, --token TOKEN          API token"
+            echo "  -m, --message MESSAGE      Custom message"
+            echo "  -h, --help                 Show this help"
+            exit 0 ;;
+        *) echo "Unknown option: $1"; exit 1 ;;
+    esac
+done
+
+# Build URLs
+BASE_URL="https://${SERVICENOW_INSTANCE}/api/sn_aia/a2a/id"
+DISCOVERY_URL="${BASE_URL}/${SERVICENOW_AGENT_ID}/well_known/agent_json"
+INVOCATION_URL="https://${SERVICENOW_INSTANCE}/api/sn_aia/a2a/v1/agent/id/${SERVICENOW_AGENT_ID}"
+
+# Generate unique IDs
+REQUEST_ID=$(uuidgen | tr '[:upper:]' '[:lower:]' | tr -d '-')
+MESSAGE_ID=$(uuidgen | tr '[:upper:]' '[:lower:]' | tr -d '-')
+
+print_info "ServiceNow A2A Curl Command Generator"
+echo "======================================"
+echo "Instance: $SERVICENOW_INSTANCE"
+echo "Agent ID: $SERVICENOW_AGENT_ID"
+echo "Message:  $CUSTOM_MESSAGE"
+echo "======================================"
+echo ""
+
+print_success "Generated Curl Commands:"
+echo ""
+
+# 1. Discovery Command
+print_info "1. Agent Discovery Command:"
+echo ""
+cat << EOF
+curl -H "Content-Type: application/json" \\
+     -H "x-sn-apikey: $SERVICENOW_TOKEN" \\
+     -H "User-Agent: ServiceNow-A2A-Test/1.0" \\
+     "$DISCOVERY_URL"
+EOF
+
+echo ""
+echo ""
+
+# 2. Message Sending Command
+print_info "2. Send Message Command:"
+echo ""
+
+# Create JSON payload
+JSON_PAYLOAD=$(cat <<EOF
+{
+  "jsonrpc": "2.0",
+  "method": "message/send",
+  "params": {
+    "message": {
+      "role": "user",
+      "parts": [
+        {
+          "kind": "text",
+          "text": "$CUSTOM_MESSAGE"
+        }
+      ],
+      "messageId": "$MESSAGE_ID",
+      "kind": "user"
+    },
+    "context": {
+      "contextId": null,
+      "taskId": null
+    },
+    "metadata": {},
+    "pushNotificationUrl": "http://localhost:8080/a2a/callback/test/$REQUEST_ID",
+    "id": "$REQUEST_ID"
+  },
+  "id": "$REQUEST_ID"
+}
+EOF
+)
+
+cat << EOF
+curl -X POST \\
+     -H "Content-Type: application/json" \\
+     -H "x-sn-apikey: $SERVICENOW_TOKEN" \\
+     -H "User-Agent: ServiceNow-A2A-Test/1.0" \\
+     -d '$JSON_PAYLOAD' \\
+     "$INVOCATION_URL"
+EOF
+
+echo ""
+echo ""
+
+# Save to files
+print_info "Saving commands to files..."
+
+# Save discovery command
+cat > discovery_command.sh << EOF
+#!/bin/bash
+# ServiceNow Agent Discovery Command
+# Generated on $(date)
+
+curl -H "Content-Type: application/json" \\
+     -H "x-sn-apikey: $SERVICENOW_TOKEN" \\
+     -H "User-Agent: ServiceNow-A2A-Test/1.0" \\
+     "$DISCOVERY_URL"
+EOF
+
+# Save message command
+cat > send_message_command.sh << EOF
+#!/bin/bash
+# ServiceNow Agent Message Command
+# Generated on $(date)
+
+curl -X POST \\
+     -H "Content-Type: application/json" \\
+     -H "x-sn-apikey: $SERVICENOW_TOKEN" \\
+     -H "User-Agent: ServiceNow-A2A-Test/1.0" \\
+     -d '$JSON_PAYLOAD' \\
+     "$INVOCATION_URL"
+EOF
+
+chmod +x discovery_command.sh send_message_command.sh
+
+print_success "Commands saved to:"
+echo "  - discovery_command.sh"
+echo "  - send_message_command.sh"
+echo ""
+
+print_warning "Usage Tips:"
+echo "  - Run './discovery_command.sh' to test agent discovery"
+echo "  - Run './send_message_command.sh' to send a message"
+echo "  - Pipe output to 'jq' for pretty JSON formatting"
+echo "  - Example: ./discovery_command.sh | jq"</pre>
+        </div>
+    </section>
+    
+    <div class="nav-links">
+        <strong>Next:</strong> <a href="ServiceNow_A2A_Examples.html">Usage Examples →</a>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                button.textContent = 'Error';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
