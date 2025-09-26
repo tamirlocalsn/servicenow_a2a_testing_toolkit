@@ -134,9 +134,89 @@
             font-size: 0.9em;
             color: #a31621;
         }
+        
+        /* Global Navigation Styles */
+        .global-nav {
+            background: #323130;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-brand {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1em;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: #d4d4d4;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        
+        .nav-links a:hover {
+            background: #0078d4;
+            color: white;
+        }
+        
+        .nav-links a.current {
+            background: #0078d4;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-links {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Global Navigation -->
+    <nav class="global-nav">
+        <div class="nav-container">
+            <a href="ServiceNow_A2A_Complete_Index.html" class="nav-brand">🏠 ServiceNow A2A Testing Toolkit</a>
+            <div class="nav-links">
+                <a href="ServiceNow_A2A_Complete_Index.html">🏠 Home</a>
+                <a href="ServiceNow_A2A_Overview.html">📋 Overview</a>
+                <a href="ServiceNow_A2A_Python_Client.html" class="current">🐍 Python Client</a>
+                <a href="ServiceNow_A2A_Bash_Scripts.html">📜 Bash Scripts</a>
+                <a href="ServiceNow_A2A_Examples.html">💡 Examples</a>
+                <a href="ServiceNow_A2A_Troubleshooting.html">🔧 Troubleshooting</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="header">
         <h1>ServiceNow A2A Testing</h1>
         <p>Python Client Guide</p>
