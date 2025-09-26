@@ -305,9 +305,8 @@
         <h2>Debug Commands</h2>
         <div class="code-block" data-lang="bash">
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            <pre># Test agent discovery with verbose output (A2A-specific test)
-curl -v -H "x-sn-apikey: your-api-key" \
-     "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"
+            <pre># Test agent discovery with verbose output (no authentication required)
+curl -v "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"
 
 # Test A2A agent invocation (correct ServiceNow format)
 curl -v -H "x-sn-apikey: your-api-key" \
@@ -429,12 +428,11 @@ curl -H "x-sn-apikey: your-api-key" \
             </ul>
             
             <h4>Method Discovery via Agent Card:</h4>
-            <p>The agent discovery endpoint may reveal supported methods:</p>
+            <p>The agent discovery endpoint may reveal supported methods (no authentication required):</p>
             <div class="code-block" data-lang="bash">
                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre># Check agent card for method information
-curl -H "x-sn-apikey: your-api-key" \
-     "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json" | jq .</pre>
+                <pre># Check agent card for method information (no authentication required)
+curl "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json" | jq .</pre>
             </div>
             
             <div class="alert alert-info">
