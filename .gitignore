@@ -53,3 +53,14 @@ env/
 # Build artifacts
 *.pdf
 *.docx
+
+# Private testing files (contain real credentials)
+test_documentation_samples.sh
+quick_test.sh
+test-config.env
+TESTING_PRIVATE.md
+.github/workflows/test-documentation.yml
+
+# Test results
+test-results.log
+test-output.txt
