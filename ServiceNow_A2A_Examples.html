@@ -51,10 +51,19 @@
         .code-block {
             background: #1e1e1e;
             color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
             position: relative;
-            .inline-code {
-            background: #f3f2f1;
-            padding: 2px 6px;
+        }
+        
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
             top: 8px;
             right: 60px;
             background: #0078d4;
@@ -135,11 +144,6 @@
         <p>Usage Examples</p>
     </div>
     
-    <div class="nav-links">
-        <a href="ServiceNow_A2A_Bash_Scripts.html">← Bash Scripts</a>
-        <a href="#current">4. Examples</a>
-        <a href="ServiceNow_A2A_Troubleshooting.html">5. Troubleshooting →</a>
-    </div>
     
     <section>
         <h1>💡 Usage Examples</h1>
