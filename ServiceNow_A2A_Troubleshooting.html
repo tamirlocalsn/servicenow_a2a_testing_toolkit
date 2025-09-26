@@ -309,11 +309,11 @@
 curl -v -H "x-sn-apikey: your-api-key" \
      "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"
 
-# Test A2A client initialization
+# Test A2A agent invocation (actual endpoint)
 curl -v -H "x-sn-apikey: your-api-key" \
      -H "Content-Type: application/json" \
-     -d '{"agent_id": "your-agent-id"}' \
-     "https://your-instance.service-now.com/api/sn_aia/a2a/client"</pre>
+     -d '{"message": "Hello, can you help me?"}' \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"</pre>
         </div>
         
         <div class="alert alert-warning">
