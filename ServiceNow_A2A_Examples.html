@@ -30,23 +30,6 @@
             font-weight: 300;
         }
         
-        .nav-links {
-            background: #f3f2f1;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        
-        .nav-links a {
-            display: inline-block;
-            margin: 5px 10px;
-            padding: 10px 20px;
-            background: #0078d4;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
         
         .code-block {
             background: #1e1e1e;
@@ -120,6 +103,71 @@
             padding: 20px;
             border-radius: 8px;
             border-left: 4px solid #0078d4;
+        }
+        
+        /* Global Navigation Styles */
+        .global-nav {
+            background: #323130;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-brand {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1em;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: #d4d4d4;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        
+        .nav-links a:hover {
+            background: #0078d4;
+            color: white;
+        }
+        
+        .nav-links a.current {
+            background: #0078d4;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-links {
+                justify-content: center;
+            }
         }
     </style>
 </head>
