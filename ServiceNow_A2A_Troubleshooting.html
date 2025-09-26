@@ -298,24 +298,26 @@
                 <li><strong>Check Permissions:</strong> Confirm the API key has A2A permissions in ServiceNow</li>
                 <li><strong>Validate Instance URL:</strong> Ensure the ServiceNow instance URL is correct (without https://)</li>
                 <li><strong>Regenerate Key:</strong> Try generating a new API key in ServiceNow</li>
-                <li><strong>Test Basic Access:</strong> Verify you can access other ServiceNow APIs with the same key</li>
+                <li><strong>Test A2A Access:</strong> Use the A2A-specific debug commands below to verify key access</li>
             </ol>
         </div>
         
         <h2>Debug Commands</h2>
         <div class="code-block" data-lang="bash">
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            <pre># Test API key with basic ServiceNow API
-curl -H "x-sn-apikey: your-api-key" \
-     "https://your-instance.service-now.com/api/now/table/sys_user?sysparm_limit=1"
-
-# Test agent discovery with verbose output
+            <pre># Test agent discovery with verbose output (A2A-specific test)
 curl -v -H "x-sn-apikey: your-api-key" \
-     "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"</pre>
+     "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"
+
+# Test A2A client initialization
+curl -v -H "x-sn-apikey: your-api-key" \
+     -H "Content-Type: application/json" \
+     -d '{"agent_id": "your-agent-id"}' \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/client"</pre>
         </div>
         
         <div class="alert alert-warning">
-            <strong>Note:</strong> Based on our testing, x-sn-apikey authentication works correctly with ServiceNow A2A. OAuth2 is supported but not required for basic operations.
+            <strong>Important:</strong> A2A API keys are scoped specifically to the A2A API (<span class="inline-code">a2aauthscope</span>). Testing against general ServiceNow table APIs (like <span class="inline-code">/api/now/table/</span>) will fail even with a valid A2A API key. Always test A2A keys against A2A-specific endpoints.
         </div>
     </section>
     
