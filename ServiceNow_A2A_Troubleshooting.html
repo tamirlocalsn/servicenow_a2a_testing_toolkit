@@ -309,10 +309,10 @@
 curl -v -H "x-sn-apikey: your-api-key" \
      "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"
 
-# Test A2A agent invocation (actual endpoint with correct JSON-RPC format)
+# Test A2A agent invocation (try common method names)
 curl -v -H "x-sn-apikey: your-api-key" \
      -H "Content-Type: application/json" \
-     -d '{"jsonrpc": "2.0", "method": "sendMessage", "params": {"message": "Hello, can you help me?"}, "id": 1}' \
+     -d '{"jsonrpc": "2.0", "method": "send", "params": {"message": "Hello, can you help me?"}, "id": 1}' \
      "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"</pre>
         </div>
         
@@ -354,10 +354,64 @@ curl -v -H "x-sn-apikey: your-api-key" \
             <h4>Required JSON-RPC Fields:</h4>
             <ul>
                 <li><span class="inline-code">jsonrpc</span>: Must be "2.0"</li>
-                <li><span class="inline-code">method</span>: Usually "sendMessage" for A2A</li>
+                <li><span class="inline-code">method</span>: The RPC method name (see Method Discovery below)</li>
                 <li><span class="inline-code">params</span>: Object containing your message and other parameters</li>
                 <li><span class="inline-code">id</span>: Unique identifier for the request (can be any number/string)</li>
             </ul>
+        </div>
+    </section>
+    
+    <section>
+        <h1>🔍 Method Discovery Issues</h1>
+        
+        <div class="alert alert-error">
+            <strong>Problem:</strong> JSON-RPC Error -32601 "Method not found"
+        </div>
+        
+        <div class="solution-steps">
+            <h4>✅ Solution:</h4>
+            <p>The method name varies by ServiceNow A2A implementation. Try these common method names:</p>
+            
+            <h4>Common A2A Method Names to Try:</h4>
+            <div class="code-block" data-lang="bash">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre># Try method: "send"
+curl -H "x-sn-apikey: your-api-key" \
+     -H "Content-Type: application/json" \
+     -d '{"jsonrpc": "2.0", "method": "send", "params": {"message": "Hello"}, "id": 1}' \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"
+
+# Try method: "invoke"
+curl -H "x-sn-apikey: your-api-key" \
+     -H "Content-Type: application/json" \
+     -d '{"jsonrpc": "2.0", "method": "invoke", "params": {"message": "Hello"}, "id": 1}' \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"
+
+# Try method: "chat"
+curl -H "x-sn-apikey: your-api-key" \
+     -H "Content-Type: application/json" \
+     -d '{"jsonrpc": "2.0", "method": "chat", "params": {"message": "Hello"}, "id": 1}' \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"
+
+# Try method: "execute"
+curl -H "x-sn-apikey: your-api-key" \
+     -H "Content-Type: application/json" \
+     -d '{"jsonrpc": "2.0", "method": "execute", "params": {"message": "Hello"}, "id": 1}' \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"</pre>
+            </div>
+            
+            <h4>Method Discovery via Agent Card:</h4>
+            <p>The agent discovery endpoint may reveal supported methods:</p>
+            <div class="code-block" data-lang="bash">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre># Check agent card for method information
+curl -H "x-sn-apikey: your-api-key" \
+     "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json" | jq .</pre>
+            </div>
+            
+            <div class="alert alert-info">
+                <strong>Progress:</strong> If you're getting "Method not found" instead of "Invalid JSON-RPC Request", your JSON-RPC format is correct! You just need to find the right method name for your specific agent.
+            </div>
         </div>
     </section>
     
