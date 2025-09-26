@@ -309,10 +309,10 @@
 curl -v -H "x-sn-apikey: your-api-key" \
      "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"
 
-# Test A2A agent invocation (try common method names)
+# Test A2A agent invocation (correct ServiceNow format)
 curl -v -H "x-sn-apikey: your-api-key" \
      -H "Content-Type: application/json" \
-     -d '{"jsonrpc": "2.0", "method": "send", "params": {"message": "Hello, can you help me?"}, "id": 1}' \
+     -d '{"jsonrpc": "2.0", "method": "message/send", "params": {"message": {"role": "user", "kind": "message", "parts": [{"kind": "text", "text": "Hello, can you help me?"}], "messageId": "test-001", "contextId": null, "taskId": null}, "metadata": {}, "pushNotificationUrl": null}, "id": "test-001"}' \
      "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"</pre>
         </div>
         
@@ -338,16 +338,30 @@ curl -v -H "x-sn-apikey: your-api-key" \
                 <pre>{"message": "Hello, can you help me?"}</pre>
             </div>
             
-            <h4>✅ Correct JSON-RPC Format:</h4>
+            <h4>✅ Correct JSON-RPC Format (ServiceNow A2A):</h4>
             <div class="code-block" data-lang="json">
                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 <pre>{
   "jsonrpc": "2.0",
-  "method": "sendMessage", 
+  "method": "message/send",
   "params": {
-    "message": "Hello, can you help me?"
+    "message": {
+      "role": "user",
+      "kind": "message",
+      "parts": [
+        {
+          "kind": "text",
+          "text": "Hello, can you help me?"
+        }
+      ],
+      "messageId": "unique-message-id-001",
+      "contextId": null,
+      "taskId": null
+    },
+    "metadata": {},
+    "pushNotificationUrl": null
   },
-  "id": 1
+  "id": "unique-request-id"
 }</pre>
             </div>
             
@@ -370,35 +384,49 @@ curl -v -H "x-sn-apikey: your-api-key" \
         
         <div class="solution-steps">
             <h4>✅ Solution:</h4>
-            <p>The method name varies by ServiceNow A2A implementation. Try these common method names:</p>
+            <p>ServiceNow A2A uses the method <strong>"message/send"</strong> with a specific message structure:</p>
             
-            <h4>Common A2A Method Names to Try:</h4>
+            <h4>Correct A2A Message Format:</h4>
             <div class="code-block" data-lang="bash">
                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre># Try method: "send"
+                <pre># ServiceNow A2A message with correct structure
 curl -H "x-sn-apikey: your-api-key" \
      -H "Content-Type: application/json" \
-     -d '{"jsonrpc": "2.0", "method": "send", "params": {"message": "Hello"}, "id": 1}' \
-     "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"
-
-# Try method: "invoke"
-curl -H "x-sn-apikey: your-api-key" \
-     -H "Content-Type: application/json" \
-     -d '{"jsonrpc": "2.0", "method": "invoke", "params": {"message": "Hello"}, "id": 1}' \
-     "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"
-
-# Try method: "chat"
-curl -H "x-sn-apikey: your-api-key" \
-     -H "Content-Type: application/json" \
-     -d '{"jsonrpc": "2.0", "method": "chat", "params": {"message": "Hello"}, "id": 1}' \
-     "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"
-
-# Try method: "execute"
-curl -H "x-sn-apikey: your-api-key" \
-     -H "Content-Type: application/json" \
-     -d '{"jsonrpc": "2.0", "method": "execute", "params": {"message": "Hello"}, "id": 1}' \
+     -d '{
+  "jsonrpc": "2.0",
+  "method": "message/send",
+  "params": {
+    "message": {
+      "role": "user",
+      "kind": "message",
+      "parts": [
+        {
+          "kind": "text",
+          "text": "Hello, can you help me?"
+        }
+      ],
+      "messageId": "msg-001",
+      "contextId": null,
+      "taskId": null
+    },
+    "metadata": {},
+    "pushNotificationUrl": null
+  },
+  "id": "req-001"
+}' \
      "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"</pre>
             </div>
+            
+            <h4>Key Message Structure Fields:</h4>
+            <ul>
+                <li><span class="inline-code">method</span>: Must be "message/send"</li>
+                <li><span class="inline-code">message.role</span>: Set to "user" for user messages</li>
+                <li><span class="inline-code">message.kind</span>: Set to "message"</li>
+                <li><span class="inline-code">message.parts</span>: Array of message parts (text, etc.)</li>
+                <li><span class="inline-code">messageId</span>: Unique identifier for this message</li>
+                <li><span class="inline-code">contextId</span>: For conversation continuity (null for new conversations)</li>
+                <li><span class="inline-code">taskId</span>: For task tracking (null if not needed)</li>
+            </ul>
             
             <h4>Method Discovery via Agent Card:</h4>
             <p>The agent discovery endpoint may reveal supported methods:</p>
