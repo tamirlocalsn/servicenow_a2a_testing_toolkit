@@ -309,15 +309,55 @@
 curl -v -H "x-sn-apikey: your-api-key" \
      "https://your-instance.service-now.com/api/sn_aia/a2a/id/your-agent-id/well_known/agent_json"
 
-# Test A2A agent invocation (actual endpoint)
+# Test A2A agent invocation (actual endpoint with correct JSON-RPC format)
 curl -v -H "x-sn-apikey: your-api-key" \
      -H "Content-Type: application/json" \
-     -d '{"message": "Hello, can you help me?"}' \
+     -d '{"jsonrpc": "2.0", "method": "sendMessage", "params": {"message": "Hello, can you help me?"}, "id": 1}' \
      "https://your-instance.service-now.com/api/sn_aia/a2a/v1/agent/id/your-agent-id"</pre>
         </div>
         
         <div class="alert alert-warning">
             <strong>Important:</strong> A2A API keys are scoped specifically to the A2A API (<span class="inline-code">a2aauthscope</span>). Testing against general ServiceNow table APIs (like <span class="inline-code">/api/now/table/</span>) will fail even with a valid A2A API key. Always test A2A keys against A2A-specific endpoints.
+        </div>
+    </section>
+    
+    <section>
+        <h1>📝 JSON-RPC Format Issues</h1>
+        
+        <div class="alert alert-error">
+            <strong>Problem:</strong> HTTP 400 Bad Request - "Invalid JSON-RPC Request"
+        </div>
+        
+        <div class="solution-steps">
+            <h4>✅ Solution:</h4>
+            <p>The ServiceNow A2A API requires <strong>JSON-RPC 2.0 format</strong>, not simple JSON messages.</p>
+            
+            <h4>❌ Incorrect Format:</h4>
+            <div class="code-block" data-lang="json">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>{"message": "Hello, can you help me?"}</pre>
+            </div>
+            
+            <h4>✅ Correct JSON-RPC Format:</h4>
+            <div class="code-block" data-lang="json">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>{
+  "jsonrpc": "2.0",
+  "method": "sendMessage", 
+  "params": {
+    "message": "Hello, can you help me?"
+  },
+  "id": 1
+}</pre>
+            </div>
+            
+            <h4>Required JSON-RPC Fields:</h4>
+            <ul>
+                <li><span class="inline-code">jsonrpc</span>: Must be "2.0"</li>
+                <li><span class="inline-code">method</span>: Usually "sendMessage" for A2A</li>
+                <li><span class="inline-code">params</span>: Object containing your message and other parameters</li>
+                <li><span class="inline-code">id</span>: Unique identifier for the request (can be any number/string)</li>
+            </ul>
         </div>
     </section>
     
