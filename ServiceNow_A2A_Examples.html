@@ -46,25 +46,15 @@
             color: white;
             text-decoration: none;
             border-radius: 5px;
-            font-weight: 500;
         }
         
         .code-block {
             background: #1e1e1e;
             color: #d4d4d4;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 0.85em;
-            line-height: 1.4;
             position: relative;
-        }
-        
-        .code-block::before {
-            content: attr(data-lang);
-            position: absolute;
+            .inline-code {
+            background: #f3f2f1;
+            padding: 2px 6px;
             top: 8px;
             right: 60px;
             background: #0078d4;
@@ -125,6 +115,21 @@
     </style>
 </head>
 <body>
+    <!-- Global Navigation -->
+    <nav class="global-nav">
+        <div class="nav-container">
+            <a href="ServiceNow_A2A_Complete_Index.html" class="nav-brand">🏠 ServiceNow A2A Testing Toolkit</a>
+            <div class="nav-links">
+                <a href="ServiceNow_A2A_Complete_Index.html">🏠 Home</a>
+                <a href="ServiceNow_A2A_Overview.html">📋 Overview</a>
+                <a href="ServiceNow_A2A_Python_Client.html">🐍 Python Client</a>
+                <a href="ServiceNow_A2A_Bash_Scripts.html">📜 Bash Scripts</a>
+                <a href="ServiceNow_A2A_Examples.html" class="current">💡 Examples</a>
+                <a href="ServiceNow_A2A_Troubleshooting.html">🔧 Troubleshooting</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="header">
         <h1>ServiceNow A2A Testing</h1>
         <p>Usage Examples</p>
