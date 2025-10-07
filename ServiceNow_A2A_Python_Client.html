@@ -94,6 +94,36 @@
             color: #004578;
         }
         
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0 10px 0;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0078d4;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .download-btn:hover {
+            background: #106ebe;
+            text-decoration: none;
+        }
+        
+        .download-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        
         h1, h2, h3 {
             color: #323130;
         }
@@ -198,7 +228,6 @@
     <div class="header">
         <h1>ServiceNow A2A Testing</h1>
         <p>Python Client Guide</p>
-        <a href="generic_a2a_client.py" download class="download-btn" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background: #fff; color: #0078d4; text-decoration: none; border-radius: 4px; font-weight: bold;">⬇️ Download Python Client</a>
     </div>
         </div>
         
@@ -206,28 +235,63 @@
         <section>
             <h1>🐍 Python A2A Client</h1>
             
-            <p>The generic Python client provides a robust interface for ServiceNow A2A integration. It handles authentication, agent discovery, message sending, and conversation context automatically.</p>
+            <p>The Python client provides a robust interface for ServiceNow A2A integration. It handles authentication, agent discovery, message sending, and conversation context automatically.</p>
             
+            <div class="script-header">
+                <h2>Script</h2>
+                <a href="generic_a2a_client.py" download class="download-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download Python Client
+                </a>
+            </div>
+            
+            <h3>Running the Client</h3>
+            <p>To run the client, execute the following command in your terminal:</p>
+            <div class="code-block" data-lang="bash">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><code>python generic_a2a_client.py</code></pre>
+            </div>
+
+            <p>Or if you need to use a specific Python version:</p>
+            <div class="code-block" data-lang="bash">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><code>python3.12 generic_a2a_client.py</code></pre>
+            </div>
+
+            <p>The script will automatically load your credentials from the <code>.env</code> file and attempt to connect to your ServiceNow instance.</p>
+
             <h2>Python Client for ServiceNow A2A</h2>
 
             <div class="alert alert-info">
                 <strong>Prerequisites:</strong>
                 <ul>
-                    <li>Python 3.8 or higher</li>
+                    <li>Python 3.12 or higher</li>
                     <li>Required packages: <code>httpx</code>, <code>python-dotenv</code>, <code>a2a-sdk</code></li>
                     <li>ServiceNow instance with A2A agent configured</li>
                     <li>Valid API key with appropriate permissions</li>
                 </ul>
             </div>
 
-            <h3>Installation</h3>
-            <p>1. Install the required packages:</p>
+            <h3>Installation and Setup</h3>
+            <p>1. Ensure you have Python 3.12 or newer installed. You can check your Python version with:</p>
+            <div class="code-block" data-lang="bash">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><code>python --version  # Should show Python 3.12.x or higher</code></pre>
+            </div>
+
+            <p>2. Install the required Python packages:</p>
             <div class="code-block" data-lang="bash">
                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 <pre><code>pip install httpx python-dotenv a2a-sdk</code></pre>
             </div>
 
-            <p>2. Create a <code>.env</code> file in the same directory as the script with your credentials:</p>
+            <p>3. Create a new file named <code>generic_a2a_client.py</code> and paste the downloaded code into it, or use the downloaded file directly.</p>
+
+            <p>4. Create a <code>.env</code> file in the same directory as the script with your credentials:</p>
             <div class="code-block" data-lang="env">
                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 <pre><code>SERVICENOW_INSTANCE=your-instance.service-now.com
