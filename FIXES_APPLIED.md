@@ -1,3 +1,7 @@
+---
+layout: none
+---
+
 # ServiceNow A2A Test Script Fixes
 
 ## Date: 2025-10-07
