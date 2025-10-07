@@ -48,118 +48,375 @@
             position: absolute;
             top: 8px;
             right: 60px;
-            background: #0078d4;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75em;
-            font-weight: bold;
+            color: #999;
+            font-size: 0.8em;
             text-transform: uppercase;
         }
         
         .copy-btn {
             position: absolute;
             top: 8px;
-            right: 8px;
-            background: #323130;
-            color: white;
-            border: 1px solid #605e5c;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75em;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .copy-btn:hover {
-            background: #484644;
-        }
-        
-        .copy-btn.copied {
-            background: #107c10;
-            border-color: #107c10;
-        }
-        
-        .alert {
-            padding: 15px 20px;
-            margin: 20px 0;
-            border-radius: 6px;
-            border-left: 4px solid;
-        }
-        
-        .alert-info {
-            background: #deecf9;
-            border-color: #0078d4;
-            color: #004578;
-        }
-        
-        .script-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 20px 0 10px 0;
-        }
-        
-        .download-btn {
+            right: 15px;
             background: #0078d4;
             color: white;
             border: none;
-            padding: 8px 16px;
             border-radius: 4px;
-            font-size: 0.9em;
+            padding: 4px 10px;
+            font-size: 0.8em;
             cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            transition: background 0.3s;
+            transition: background-color 0.2s;
         }
         
-        .download-btn:hover {
+        .copy-btn:hover {
             background: #106ebe;
         }
         
-        .download-btn i {
-            margin-right: 8px;
+        .copy-btn:active {
+            transform: translateY(1px);
         }
         
         pre {
             margin: 0;
             white-space: pre-wrap;
-            word-break: break-word;
+            word-wrap: break-word;
         }
         
-        code {
+        .inline-code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
+            color: #d04a02;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .alert-info {
+            background-color: #e7f5ff;
+            border-left: 4px solid #0078d4;
+            color: #005a9e;
+        }
+        
+        .alert-success {
+            background-color: #dff6dd;
+            border-left: 4px solid #107c10;
+            color: #0b5a0b;
+        }
+        
+        .usage-grid, .troubleshooting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .troubleshooting-card {
+            background: #fff;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .troubleshooting-card h4 {
+            margin-top: 0;
+            color: #d04a02;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+        
+        .troubleshooting-card ul {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+        }
+        
+        .troubleshooting-card li {
+            margin-bottom: 5px;
+        }
+        
+        .usage-card {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0078d4;
+        }
+        
+        .usage-card h3 {
+            margin-top: 0;
+            color: #0078d4;
+        }
+        
+        /* Global Navigation */
+        .global-nav {
+            background: #323130;
+            padding: 15px 0;
+            margin: -20px -20px 30px -20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-brand {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1em;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .nav-links {
-            margin: 30px 0;
-            padding: 20px;
-            background: #f3f2f1;
-            border-radius: 8px;
-            text-align: center;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         
         .nav-links a {
-            color: #0078d4;
+            color: #d4d4d4;
             text-decoration: none;
-            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
         }
         
         .nav-links a:hover {
-            text-decoration: underline;
+            background: #0078d4;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .nav-links a.current {
+            background: #0078d4;
+            color: white;
         }
         
         @media (max-width: 768px) {
             .nav-container {
                 flex-direction: column;
+                gap: 10px;
             }
             
-            .header h1 {
-                font-size: 2em;
+            .nav-links {
+                justify-content: center;
+                width: 100%;
             }
-        }
+            
+            .nav-links a {
+                padding: 6px 10px;
+                padding: 20px;
+                border-radius: 8px;
+                margin: 20px 0;
+                overflow-x: auto;
+                font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+                font-size: 0.85em;
+                line-height: 1.4;
+                position: relative;
+            }
+            
+            .code-block::before {
+                content: attr(data-lang);
+                position: absolute;
+                top: 8px;
+                right: 60px;
+                background: #0078d4;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 0.75em;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            
+            .copy-btn {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                background: #323130;
+                color: white;
+                border: 1px solid #605e5c;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 0.75em;
+                cursor: pointer;
+                transition: background 0.3s;
+            }
+            
+            .copy-btn:hover {
+                background: #484644;
+            }
+            
+            .copy-btn.copied {
+                background: #107c10;
+                border-color: #107c10;
+            }
+            
+            .alert {
+                padding: 15px 20px;
+                margin: 20px 0;
+                border-radius: 6px;
+                border-left: 4px solid;
+            }
+            
+            .alert-info {
+                background: #deecf9;
+                border-color: #0078d4;
+                color: #004578;
+            }
+            
+            .script-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin: 20px 0 10px 0;
+            }
+            
+            .download-btn {
+                background: #0078d4;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 0.9em;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                transition: background 0.3s;
+            }
+            
+            .download-btn:hover {
+                background: #106ebe;
+            }
+            
+            .download-btn i {
+                margin-right: 8px;
+            }
+            
+            pre {
+                margin: 0;
+                white-space: pre-wrap;
+                word-break: break-word;
+            }
+            
+            code {
+                font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+                font-size: 0.9em;
+            }
+            
+            .nav-links {
+                margin: 30px 0;
+                padding: 20px;
+                background: #f3f2f1;
+                border-radius: 8px;
+                text-align: center;
+            }
+            
+            .nav-links a {
+                color: #0078d4;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            
+            .nav-links a:hover {
+                text-decoration: underline;
+            }
+            
+            .global-nav {
+                background: #323130;
+                padding: 15px 0;
+                margin: -20px -20px 30px -20px;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                border-radius: 0 0 8px 8px;
+            }
+            
+            .nav-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+            
+            .nav-brand {
+                color: white;
+                font-weight: 600;
+                font-size: 1.1em;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .nav-links {
+                display: flex;
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .nav-links a {
+                color: #d4d4d4;
+                text-decoration: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+                transition: all 0.3s ease;
+                font-size: 0.9em;
+            }
+            
+            .nav-links a:hover {
+                background: #0078d4;
+                color: white;
+                text-decoration: none;
+            }
+            
+            .nav-links a.current {
+                background: #0078d4;
+                color: white;
+            }
+            
+            @media (max-width: 768px) {
+                .nav-container {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                
+                .nav-links {
+                    justify-content: center;
+                    width: 100%;
+                }
+                
+                .nav-links a {
+                    padding: 6px 10px;
+                    font-size: 0.85em;
+                }
+                
+                .header h1 {
+                    font-size: 2em;
+                }
+            }
     </style>
 </head>
 <body>
