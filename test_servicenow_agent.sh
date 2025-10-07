@@ -134,10 +134,13 @@ if [ -z "$CUSTOM_MESSAGE" ]; then
     CUSTOM_MESSAGE="Hello! This is a test message. What can you help me with?"
 fi
 
+# Clean up the instance URL (remove protocol and trailing slashes)
+CLEAN_INSTANCE=$(echo "$SERVICENOW_INSTANCE" | sed -e 's|^https\?://||' -e 's|/$||')
+
 # Build URLs
-BASE_URL="https://${SERVICENOW_INSTANCE}/api/sn_aia/a2a/id"
+BASE_URL="https://${CLEAN_INSTANCE}/api/sn_aia/a2a/id"
 DISCOVERY_URL="${BASE_URL}/${SERVICENOW_AGENT_ID}/well_known/agent_json"
-INVOCATION_URL="https://${SERVICENOW_INSTANCE}/api/sn_aia/a2a/v1/agent/id/${SERVICENOW_AGENT_ID}"
+INVOCATION_URL="https://${CLEAN_INSTANCE}/api/sn_aia/a2a/v1/agent/id/${SERVICENOW_AGENT_ID}"
 
 # Generate unique IDs
 REQUEST_ID=$(uuidgen | tr '[:upper:]' '[:lower:]' | tr -d '-')
@@ -145,7 +148,7 @@ MESSAGE_ID=$(uuidgen | tr '[:upper:]' '[:lower:]' | tr -d '-')
 
 print_status "ServiceNow A2A Agent Test"
 echo "=================================="
-echo "Instance: $SERVICENOW_INSTANCE"
+echo "Instance: https://$CLEAN_INSTANCE"
 echo "Agent ID: $SERVICENOW_AGENT_ID"
 echo "API Key:  ${SERVICENOW_TOKEN:0:15}..."
 echo "Message:  $CUSTOM_MESSAGE"
@@ -161,10 +164,11 @@ if [ "$VERBOSE" = true ]; then
 fi
 
 DISCOVERY_RESPONSE=$(curl -s -w "\n%{http_code}" \
+    --max-time 30 \
     -H "Content-Type: application/json" \
     -H "x-sn-apikey: $SERVICENOW_TOKEN" \
     -H "User-Agent: ServiceNow-A2A-Test/1.0" \
-    "$DISCOVERY_URL")
+    "$DISCOVERY_URL" 2>&1)
 
 # Extract HTTP status code (last line) and response body
 HTTP_STATUS=$(echo "$DISCOVERY_RESPONSE" | tail -n 1)
@@ -241,12 +245,13 @@ if [ "$VERBOSE" = true ]; then
 fi
 
 MESSAGE_RESPONSE=$(curl -s -w "\n%{http_code}" \
+    --max-time 30 \
     -X POST \
     -H "Content-Type: application/json" \
     -H "x-sn-apikey: $SERVICENOW_TOKEN" \
     -H "User-Agent: ServiceNow-A2A-Test/1.0" \
     -d "$JSON_PAYLOAD" \
-    "$INVOCATION_URL")
+    "$INVOCATION_URL" 2>&1)
 
 # Extract HTTP status code (last line) and response body
 HTTP_STATUS=$(echo "$MESSAGE_RESPONSE" | tail -n 1)
