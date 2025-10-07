@@ -26,7 +26,7 @@ title: ServiceNow A2A Testing Script
 
 <div class="code-block" data-lang="bash">
     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-    <pre><code>{% include_relative test_servicenow_agent.sh %}</code></pre>
+    <pre><code>{% include test_servicenow_agent.sh %}</code></pre>
 </div>
 
 <h2 id="usage">Usage</h2>
