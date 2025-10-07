@@ -527,8 +527,8 @@ MESSAGE_BODY=$(echo "$MESSAGE_RESPONSE" | sed '$d')
 if [ "$HTTP_STATUS" = "200" ]; then
     print_success "Message sent successfully!"
     
-    # Extract agent response using python if available
-    AGENT_RESPONSES=$(echo "$MESSAGE_BODY" | python3 -c "
+    # Parse agent response
+    AGENT_RESPONSE=$(echo "$MESSAGE_BODY" | python3 -c "
 import sys, json
 try:
     data = json.load(sys.stdin)
@@ -537,17 +537,18 @@ try:
     message = status.get('message', {})
     parts = message.get('parts', [])
     
-    for i, part in enumerate(parts):
+    for part in parts:
         if part.get('kind') == 'text':
-            print(f'Response {i+1}: {part.get(\"text\", \"\")}')
-except:
-    print('Could not parse agent response')
-" 2>/dev/null)
-
-    if [ -n "$AGENT_RESPONSES" ]; then
+            print(part.get('text', ''))
+            
+except Exception as e:
+    print(f'Error parsing response: {str(e)}')
+" 2>/dev/null || echo "Could not parse agent response")
+    
+    if [ -n "$AGENT_RESPONSE" ]; then
         echo ""
         print_status "Agent Response:"
-        echo "$AGENT_RESPONSES"
+        echo "$AGENT_RESPONSE"
     fi
     
     if [ "$VERBOSE" = true ]; then
@@ -574,7 +575,6 @@ echo ""
 echo "# Send Message:"
 echo "curl --max-time 30 -X POST -H \"Content-Type: application/json\" -H \"x-sn-apikey: $SERVICENOW_TOKEN\" -H \"User-Agent: ServiceNow-A2A-Test/1.0\" -d '$JSON_PAYLOAD' \"$INVOCATION_URL\""
 
-MESSAGE_RESPONSE=$(curl -s -w "\n%{http_code}" \
     --max-time 30 \
     -X POST \
     -H "Content-Type: application/json" \
