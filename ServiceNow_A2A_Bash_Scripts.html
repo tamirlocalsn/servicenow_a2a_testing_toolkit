@@ -611,8 +611,7 @@ CALLBACK_TOKEN=$(uuidgen | tr -d '-')
 CALLBACK_URL="http://localhost:8080/a2a/callback/$SERVICENOW_AGENT_ID/$CALLBACK_TOKEN"
 
 # Create JSON payload for sync mode
-SYNC_JSON_PAYLOAD=$(cat <<EOF
-{
+SYNC_JSON_PAYLOAD='{
   "jsonrpc": "2.0",
   "method": "message/send",
   "params": {
@@ -621,10 +620,10 @@ SYNC_JSON_PAYLOAD=$(cat <<EOF
       "parts": [
         {
           "kind": "text",
-          "text": "$CUSTOM_MESSAGE"
+          "text": "'"$CUSTOM_MESSAGE"'"
         }
       ],
-      "messageId": "$MESSAGE_ID",
+      "messageId": "'"$MESSAGE_ID"'",
       "kind": "user"
     },
     "context": {
@@ -632,17 +631,14 @@ SYNC_JSON_PAYLOAD=$(cat <<EOF
       "taskId": null
     },
     "metadata": {},
-    "pushNotificationUrl": "$CALLBACK_URL",
-    "id": "$REQUEST_ID"
+    "pushNotificationUrl": "'"$CALLBACK_URL"'",
+    "id": "'"$REQUEST_ID"'"
   },
-  "id": "$REQUEST_ID"
-}
-EOF
-)
+  "id": "'"$REQUEST_ID"'"
+}'
 
 # Create JSON payload for async mode
-ASYNC_JSON_PAYLOAD=$(cat <<EOF
-{
+ASYNC_JSON_PAYLOAD='{
   "jsonrpc": "2.0",
   "method": "message/send",
   "params": {
@@ -650,8 +646,8 @@ ASYNC_JSON_PAYLOAD=$(cat <<EOF
       "acceptedOutputModes": ["application/json"],
       "historyLength": 0,
       "pushNotificationConfig": {
-        "url": "$CALLBACK_URL",
-        "token": "$CALLBACK_TOKEN",
+        "url": "'"$CALLBACK_URL"'",
+        "token": "'"$CALLBACK_TOKEN"'",
         "authentication": {
           "schemes": ["Bearer"]
         }
@@ -663,19 +659,17 @@ ASYNC_JSON_PAYLOAD=$(cat <<EOF
       "parts": [
         {
           "kind": "text",
-          "text": "$CUSTOM_MESSAGE"
+          "text": "'"$CUSTOM_MESSAGE"'"
         }
       ],
-      "messageId": "${MESSAGE_ID}_async",
-      "contextId": "$REQUEST_ID",
-      "taskId": "$REQUEST_ID"
+      "messageId": "'"${MESSAGE_ID}_async"'",
+      "contextId": "'"$REQUEST_ID"'",
+      "taskId": "'"$REQUEST_ID"'"
     },
     "metadata": {}
   },
-  "id": "${REQUEST_ID}_async"
-}
-EOF
-)
+  "id": "'"${REQUEST_ID}_async"'"
+}'
 
 # Try sync mode first if not explicitly in async mode
 if [ "$ASYNC_MODE" = false ]; then
