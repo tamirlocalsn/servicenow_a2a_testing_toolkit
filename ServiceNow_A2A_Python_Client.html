@@ -30,7 +30,6 @@
             font-weight: 300;
         }
         
-        
         .code-block {
             background: #1e1e1e;
             color: #d4d4d4;
@@ -102,109 +101,63 @@
         }
         
         .download-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
             background: #0078d4;
             color: white;
+            border: none;
             padding: 8px 16px;
             border-radius: 4px;
+            font-size: 0.9em;
+            cursor: pointer;
             text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            transition: background 0.3s;
         }
         
         .download-btn:hover {
             background: #106ebe;
-            text-decoration: none;
         }
         
-        .download-btn svg {
-            width: 16px;
-            height: 16px;
+        .download-btn i {
+            margin-right: 8px;
         }
         
-        h1, h2, h3 {
-            color: #323130;
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
         
-        h1 {
-            font-size: 2.2em;
-            border-bottom: 3px solid #0078d4;
-            padding-bottom: 10px;
-        }
-        
-        .inline-code {
-            background: #f3f2f1;
-            padding: 2px 6px;
-            border-radius: 4px;
+        code {
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
-            color: #a31621;
-        }
-        
-        /* Global Navigation Styles */
-        .global-nav {
-            background: #323130;
-            padding: 15px 0;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .nav-brand {
-            color: white;
-            font-weight: 600;
-            font-size: 1.1em;
-            text-decoration: none;
         }
         
         .nav-links {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f3f2f1;
+            border-radius: 8px;
+            text-align: center;
         }
         
         .nav-links a {
-            color: #d4d4d4;
+            color: #0078d4;
             text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            font-size: 0.9em;
+            font-weight: 500;
         }
         
         .nav-links a:hover {
-            background: #0078d4;
-            color: white;
-        }
-        
-        .nav-links a.current {
-            background: #0078d4;
-            color: white;
+            text-decoration: underline;
         }
         
         @media (max-width: 768px) {
             .nav-container {
                 flex-direction: column;
-                gap: 10px;
             }
             
-            .nav-links {
-                justify-content: center;
+            .header h1 {
+                font-size: 2em;
             }
         }
     </style>
@@ -213,48 +166,31 @@
     <!-- Global Navigation -->
     <nav class="global-nav">
         <div class="nav-container">
-            <a href="ServiceNow_A2A_Complete_Index.html" class="nav-brand">🏠 ServiceNow A2A Testing Toolkit</a>
+            <div class="nav-logo">ServiceNow A2A Testing Toolkit</div>
             <div class="nav-links">
-                <a href="ServiceNow_A2A_Complete_Index.html">🏠 Home</a>
-                <a href="ServiceNow_A2A_Overview.html">📋 Overview</a>
-                <a href="ServiceNow_A2A_Python_Client.html" class="current">🐍 Python Client</a>
-                <a href="ServiceNow_A2A_Bash_Scripts.html">📜 Bash Scripts</a>
-                <a href="ServiceNow_A2A_Examples.html">💡 Examples</a>
-                <a href="ServiceNow_A2A_Troubleshooting.html">🔧 Troubleshooting</a>
+                <a href="index.html">Home</a> | 
+                <a href="ServiceNow_A2A_Python_Client.html" class="active">Python Client</a> | 
+                <a href="ServiceNow_A2A_Bash_Scripts.html">Bash Scripts</a>
             </div>
         </div>
     </nav>
 
     <div class="header">
-        <h1>ServiceNow A2A Testing</h1>
-        <p>Python Client Guide</p>
+        <h1>ServiceNow A2A Python Client</h1>
+        <p>A Python client for testing ServiceNow's Agent-to-Agent (A2A) integration</p>
     </div>
-        </div>
-        
-        
-        <section>
-            <h1>🐍 Python A2A Client</h1>
-            
-            <p>The Python client provides a robust interface for ServiceNow A2A integration. It handles authentication, agent discovery, message sending, and conversation context automatically.</p>
-            
-            <div class="script-header">
-                <h2>Script</h2>
-                <a href="generic_a2a_client.py" download class="download-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Download Python Client
-                </a>
-            </div>
-            
-            <h3>Complete Source Code</h3>
-            <p>Here's the complete source code for the Python client. You can also download it using the button above.</p>
-            
-            <div class="code-block" data-lang="python">
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre>#!/usr/bin/env python3
+
+    <section>
+        <h2>📥 Download</h2>
+        <p>Download the latest version of the Python client script:</p>
+        <a href="generic_a2a_client.py" class="download-btn" download>
+            <i>↓</i> Download Python Client
+        </a>
+
+        <h3>Complete Source Code</h3>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>#!/usr/bin/env python3
 """
 ServiceNow A2A Client
 
@@ -267,42 +203,33 @@ Usage:
     # SERVICENOW_INSTANCE=your-instance.service-now.com
     # SERVICENOW_AGENT_ID=your-agent-id
     # SERVICENOW_TOKEN=your-api-key
+    
+    # Run the client
+    python generic_a2a_client.py
 """
 
-import os
 import asyncio
-import logging
+import os
 import json
-from pathlib import Path
-from typing import Dict, Any, Optional
-from uuid import uuid4
-from dataclasses import dataclass
-
+import logging
 import httpx
+from uuid import uuid4
+from typing import Dict, Any, Optional
+from dataclasses import dataclass
+from pathlib import Path
 from dotenv import load_dotenv
-from a2a_sdk import A2AClient
-from a2a_sdk.models import AgentCard, SendMessageRequest, MessageSendParams
 
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-@dataclass
-class ServiceNowConfig:
-    """Configuration for ServiceNow A2A client"""
-    instance: str  # e.g., "your-instance.service-now.com"
-    agent_id: str  # ServiceNow agent ID
-    api_key: str   # ServiceNow API key
-
+# Load environment variables from .env file
 def load_environment():
     # Look for .env file in current directory and parent directories
     current_dir = Path(__file__).parent.absolute()
     env_path = None
     
-    # Check current directory and parent directories for .env file
+    # Check current directory and parent directories
     for path in [current_dir, current_dir.parent]:
         env_file = path / '.env'
         if env_file.exists():
@@ -310,54 +237,73 @@ def load_environment():
             break
     
     if env_path:
+        logger.info(f"Loading environment from: {env_path}")
         load_dotenv(env_path)
-        logger.info(f"Loaded environment variables from {env_path}")
     else:
-        logger.info("No .env file found, using environment variables")
+        logger.warning("No .env file found in current or parent directories")
+
+# Load environment variables
+load_environment()
+
+@dataclass
+class ServiceNowConfig:
+    """Configuration for ServiceNow A2A client"""
+    instance: str  # e.g., "your-instance.service-now.com"
+    agent_id: str  # ServiceNow agent ID
+    api_key: str   # ServiceNow API key
     
-    # Get required environment variables
-    instance = os.getenv('SERVICENOW_INSTANCE')
-    agent_id = os.getenv('SERVICENOW_AGENT_ID')
-    api_key = os.getenv('SERVICENOW_TOKEN')
-    
-    if not all([instance, agent_id, api_key]):
-        missing = []
-        if not instance:
-            missing.append('SERVICENOW_INSTANCE')
-        if not agent_id:
-            missing.append('SERVICENOW_AGENT_ID')
-        if not api_key:
-            missing.append('SERVICENOW_TOKEN')
-        raise ValueError(f"Missing required environment variables: {', '.join(missing)}")
-    
-    return ServiceNowConfig(instance=instance, agent_id=agent_id, api_key=api_key)
+    @classmethod
+    def from_env(cls) -> 'ServiceNowConfig':
+        """Create configuration from environment variables"""
+        instance = os.getenv("SERVICENOW_INSTANCE")
+        agent_id = os.getenv("SERVICENOW_AGENT_ID")
+        api_key = os.getenv("SERVICENOW_TOKEN")
+        
+        if not all([instance, agent_id, api_key]):
+            raise ValueError(
+                "Missing required environment variables. Please set:\n"
+                "- SERVICENOW_INSTANCE\n"
+                "- SERVICENOW_AGENT_ID\n"
+                "- SERVICENOW_TOKEN"
+            )
+            
+        return cls(instance=instance, agent_id=agent_id, api_key=api_key)
 
 class ServiceNowA2AClient:
     """ServiceNow A2A Client"""
     
     def __init__(self, instance: str = None, agent_id: str = None, api_key: str = None):
         """
-        Initialize the ServiceNow A2A client.
+        Initialize the ServiceNow A2A client
         
         Args:
-            instance: ServiceNow instance (e.g., 'your-instance.service-now.com')
-            agent_id: ServiceNow A2A agent ID
+            instance: ServiceNow instance (e.g., "your-instance.service-now.com")
+            agent_id: ServiceNow agent ID
             api_key: ServiceNow API key
         """
-        if all([instance, agent_id, api_key]):
-            self.config = ServiceNowConfig(instance, agent_id, api_key)
-        else:
-            try:
-                self.config = load_environment()
-            except ValueError as e:
-                logger.error(f"Configuration error: {e}")
-                raise
+        # Load from parameters or environment variables
+        self.config = ServiceNowConfig(
+            instance=instance or os.getenv("SERVICENOW_INSTANCE"),
+            agent_id=agent_id or os.getenv("SERVICENOW_AGENT_ID"),
+            api_key=api_key or os.getenv("SERVICENOW_TOKEN")
+        )
         
-        self.agent_card = None
-        self.a2a_client = None
+        # Log the configuration (without exposing the full API key)
+        logger.info(f"Configuration loaded - Instance: {self.config.instance}, Agent ID: {self.config.agent_id}")
+        
+        if not all([self.config.instance, self.config.agent_id, self.config.api_key]):
+            raise ValueError(
+                "Missing required configuration. Please provide:\n"
+                "- SERVICENOW_INSTANCE\n"
+                "- SERVICENOW_AGENT_ID\n"
+                "- SERVICENOW_TOKEN\n"
+                "Either pass these as parameters or set them in the .env file."
+            )
+    
+        # Initialize HTTP client settings
         self.timeout = 30.0
-        
-    async def _get_agent_card(self, httpx_client: httpx.AsyncClient) -> AgentCard:
+    
+    async def _get_agent_card(self, client: httpx.AsyncClient) -> Dict[str, Any]:
         """Fetch the agent card from ServiceNow"""
         headers = {
             'Authorization': f'Bearer {self.config.api_key}',
@@ -369,7 +315,7 @@ class ServiceNowA2AClient:
         
         try:
             logger.info(f"Fetching agent card from {discovery_url}")
-            response = await httpx_client.get(
+            response = await client.get(
                 discovery_url,
                 headers=headers,
                 timeout=self.timeout
@@ -378,7 +324,7 @@ class ServiceNowA2AClient:
             
             agent_data = response.json()
             logger.info(f"Successfully fetched agent card: {agent_data.get('name')}")
-            return AgentCard(**agent_data)
+            return agent_data
             
         except httpx.HTTPStatusError as e:
             logger.error(f"HTTP error fetching agent card: {e.response.status_code} - {e.response.text}")
@@ -397,74 +343,8 @@ class ServiceNowA2AClient:
         Returns:
             The agent's response as a dictionary
         """
-        timeout = httpx.Timeout(self.timeout, connect=10.0)
-        
-        async with httpx.AsyncClient(timeout=timeout) as httpx_client:
-            try:
-                # Fetch agent card if not already fetched
-                if not self.agent_card:
-                    self.agent_card = await self._get_agent_card(httpx_client)
-                
-                # Initialize A2A client if not already initialized
-                if not self.a2a_client:
-                    self.a2a_client = A2AClient(
-                        httpx_client=httpx_client,
-                        agent_card=self.agent_card
-                    )
-                
-                # Create message body
-                message_body = {
-                    'message': {
-                        'role': 'user',
-                        'parts': [{'kind': 'text', 'text': message}],
-                        'messageId': str(uuid4()),
-                        'kind': 'message'
-                    },
-                    'context': {
-                        'contextId': str(uuid4())
-                    },
-                    'metadata': {},
-                    'pushNotificationUrl': f"http://localhost:8080/a2a/callback/{self.config.agent_id}/{uuid4().hex}",
-                    'id': str(uuid4())
-                }
-                
-                # Create request
-                request = SendMessageRequest(
-                    id=str(uuid4()),
-                    params=MessageSendParams(**message_body)
-                )
-                
-                # Send message
-                logger.info(f"Sending message to agent: {message}")
-                response = await self.a2a_client.send_message(request)
-                logger.info("Message sent successfully!")
-                
-                # Convert response to dict if it's a Pydantic model
-                if hasattr(response, 'model_dump'):
-                    return response.model_dump(mode='json')
-                
-                # If it's already a dict, return as is
-                if isinstance(response, dict):
-                    return response
-                    
-                # Otherwise, try to convert to dict
-                try:
-                    return dict(response)
-                except (TypeError, ValueError):
-                    return str(response)
-                
-            except Exception as e:
-                logger.error(f"Error sending message: {str(e)}")
-                return {
-                    "error": str(e),
-                    "error_type": type(e).__name__,
-                    "config": {
-                        "instance": self.config.instance,
-                        "agent_id": self.config.agent_id,
-                        "api_key": f"{self.config.api_key[:5]}..." if self.config.api_key else None
-                    }
-                }
-
+        return await self.connect_and_send(message)
+    
     async def connect_and_send(self, message: str) -> Dict[str, Any]:
         """Send a message to the ServiceNow agent."""
         async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -561,82 +441,44 @@ async def main():
     return 0
 
 if __name__ == "__main__":
-    asyncio.run(main())</pre>
-            </div>
-            
-            <h3>Running the Client</h3>
-            <p>To run the client, execute the following command in your terminal:</p>
-            <div class="code-block" data-lang="bash">
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre><code>python generic_a2a_client.py</code></pre>
-            </div>
+    asyncio.run(main())</code></pre>
+        </div>
 
-            <p>Or if you need to use a specific Python version:</p>
-            <div class="code-block" data-lang="bash">
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre><code>python3.12 generic_a2a_client.py</code></pre>
-            </div>
+        <h2>Installation and Setup</h2>
+        <p>1. Ensure you have Python 3.12 or newer installed. You can check your Python version with:</p>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>python --version  # Should show Python 3.12.x or higher</code></pre>
+        </div>
 
-            <p>The script will automatically load your credentials from the <code>.env</code> file and attempt to connect to your ServiceNow instance.</p>
+        <p>2. Install the required Python packages:</p>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>pip install httpx python-dotenv</code></pre>
+        </div>
 
-            <div class="alert alert-info">
-                <strong>Note on Agent Types:</strong>
-                <ul>
-                    <li>This client is designed to work with <strong>synchronous</strong> ServiceNow A2A agents.</li>
-                    <li>If you're testing with an <strong>asynchronous</strong> agent, you'll receive an error: <code>"Push Notification URL is required for asynchronous requests"</code>.</li>
-                    <li>For async agents, you'll need to implement a webhook endpoint to receive the response, as they don't return results immediately.</li>
-                </ul>
-            </div>
+        <p>3. Create a new file named <code>generic_a2a_client.py</code> and paste the downloaded code into it, or use the downloaded file directly.</p>
 
-            <h2>Python Client for ServiceNow A2A</h2>
-
-            <div class="alert alert-info">
-                <strong>Prerequisites:</strong>
-                <ul>
-                    <li>Python 3.12 or higher</li>
-                    <li>Required packages: <code>httpx</code>, <code>python-dotenv</code>, <code>a2a-sdk</code></li>
-                    <li>ServiceNow instance with A2A agent configured</li>
-                    <li>Valid API key with appropriate permissions</li>
-                </ul>
-            </div>
-
-            <h3>Installation and Setup</h3>
-            <p>1. Ensure you have Python 3.12 or newer installed. You can check your Python version with:</p>
-            <div class="code-block" data-lang="bash">
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre><code>python --version  # Should show Python 3.12.x or higher</code></pre>
-            </div>
-
-            <p>2. Install the required Python packages:</p>
-            <div class="code-block" data-lang="bash">
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre><code>pip install httpx python-dotenv a2a-sdk</code></pre>
-            </div>
-
-            <p>3. Create a new file named <code>generic_a2a_client.py</code> and paste the downloaded code into it, or use the downloaded file directly.</p>
-
-            <p>4. Create a <code>.env</code> file in the same directory as the script with your credentials:</p>
-            <div class="code-block" data-lang="env">
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre><code>SERVICENOW_INSTANCE=your-instance.service-now.com
+        <p>4. Create a <code>.env</code> file in the same directory as the script with your credentials:</p>
+        <div class="code-block" data-lang="env">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>SERVICENOW_INSTANCE=your-instance.service-now.com
 SERVICENOW_AGENT_ID=your_agent_id_here
 SERVICENOW_TOKEN=your_api_token_here</code></pre>
-            </div>
-        </section>
-        
-        <section>
-            <h2>Running the Client</h2>
-            <p>After setting up the environment variables, you can run the client with:</p>
-            <div class="code-block" data-lang="bash">
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre><code>python generic_a2a_client.py</code></pre>
-            </div>
-            
-            <h3>Example Usage</h3>
-            <p>Here's how you can use the client in your Python code:</p>
-            <div class="code-block" data-lang="python">
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre><code>import asyncio
+        </div>
+
+        <h2>Running the Client</h2>
+        <p>After setting up the environment variables, you can run the client with:</p>
+        <div class="code-block" data-lang="bash">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>python generic_a2a_client.py</code></pre>
+        </div>
+
+        <h2>Example Usage</h2>
+        <p>Here's how you can use the client in your Python code:</p>
+        <div class="code-block" data-lang="python">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code>import asyncio
 from generic_a2a_client import ServiceNowA2AClient
 
 async def main():
@@ -649,68 +491,24 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())</code></pre>
-            </div>
-            
-            <h3>Troubleshooting</h3>
-            <p>If you encounter any issues:</p>
-            <ul>
-                <li>Verify your <code>.env</code> file contains all required variables</li>
-                <li>Check that your ServiceNow instance URL is correct and accessible</li>
-                <li>Ensure your API key has the necessary permissions</li>
-                <li>Run with debug logging for more detailed error information</li>
-            </ul>
-        </section>
-    
-    <section>
-        <h1>💡 Usage Examples</h1>
-        
-        <h2>Basic Usage</h2>
-        <div class="code-block" data-lang="python">
-            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            <pre>import asyncio
-from generic_a2a_client import ServiceNowA2AClient
-
-async def main():
-    client = ServiceNowA2AClient()
-    response = await client.connect_and_send("What can you help me with?")
-    print(response)
-
-asyncio.run(main())</div>
-        
-        <h2>Direct Configuration</h2>
-        <div class="code-block" data-lang="python">
-            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            <pre>client = ServiceNowA2AClient(
-    instance="your-instance.service-now.com",
-    agent_id="your-agent-id",
-    api_key="your-api-key"
-)
-
-response = await client.connect_and_send("How can you assist me?")</pre>
         </div>
-        
-        <h2>Conversation with Context</h2>
-        <div class="code-block" data-lang="python">
-            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            <pre>async def conversation_example():
-    client = ServiceNowA2AClient()
-    
-    # First message
-    response1 = await client.connect_and_send("What topics do you cover?")
-    
-    # Extract context for follow-up
-    context_id = response1.get('result', {}).get('contextId')
-    
-    # Follow-up message with context
-    response2 = await client.connect_and_send(
-        "Tell me more about the first topic",
-        context_id=context_id
-    )
-    
-    return response1, response2</pre>
+
+        <h2>Troubleshooting</h2>
+        <p>If you encounter any issues:</p>
+        <ul>
+            <li>Verify your <code>.env</code> file contains all required variables</li>
+            <li>Check that your ServiceNow instance URL is correct and accessible</li>
+            <li>Ensure your API key has the necessary permissions</li>
+            <li>Run with debug logging for more detailed error information</li>
+        </ul>
+
+        <div class="alert alert-info">
+            <strong>Note:</strong> This client requires a synchronous ServiceNow A2A agent. 
+            If you're using an asynchronous agent, you'll need to implement a webhook 
+            endpoint to receive responses.
         </div>
     </section>
-    
+
     <div class="nav-links">
         <strong>Next:</strong> <a href="ServiceNow_A2A_Bash_Scripts.html">Bash Scripts Guide →</a>
     </div>
@@ -729,10 +527,13 @@ response = await client.connect_and_send("How can you assist me?")</pre>
                     button.classList.remove('copied');
                 }, 2000);
             }).catch(err => {
-                console.error('Failed to copy: ', err);
-                button.textContent = 'Error';
+                console.error('Failed to copy text: ', err);
+                button.textContent = 'Failed to copy';
+                button.classList.add('error');
+                
                 setTimeout(() => {
                     button.textContent = 'Copy';
+                    button.classList.remove('error');
                 }, 2000);
             });
         }
