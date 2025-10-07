@@ -1,50 +1,59 @@
 #!/usr/bin/env python3
 """
-Generic ServiceNow A2A Client
+ServiceNow A2A Client
 
-A configurable client for connecting to any ServiceNow Agent-to-Agent (A2A) endpoint.
-Supports both environment variables and direct configuration.
+A client for connecting to ServiceNow Agent-to-Agent (A2A) endpoints.
+Supports environment variables and direct configuration.
 
 Usage:
     # Using environment variables
-    export SERVICENOW_INSTANCE="your-instance.service-now.com"
-    export SERVICENOW_AGENT_ID="your-agent-id"
-    export SERVICENOW_TOKEN="your-api-key"
+    # Create a .env file with:
+    # SERVICENOW_INSTANCE=your-instance.service-now.com
+    # SERVICENOW_AGENT_ID=your-agent-id
+    # SERVICENOW_TOKEN=your-api-key
+    
+    # Run the client
     python generic_a2a_client.py
-
-    # Or configure directly in code
-    client = ServiceNowA2AClient(
-        instance="your-instance.service-now.com",
-        agent_id="your-agent-id", 
-        api_key="your-api-key"
-    )
-    await client.send_message("Your message here")
 """
 
 import asyncio
-from uuid import uuid4
-import httpx 
 import os
-from pathlib import Path
-from typing import Optional, Dict, Any
+import json
+import logging
+import httpx
+from uuid import uuid4
+from typing import Dict, Any, Optional
 from dataclasses import dataclass
-
-# Load environment variables from .env file if it exists
-env_file = Path(__file__).parent / '.env'
-if env_file.exists():
-    with open(env_file) as f:
-        for line in f:
-            if line.strip() and not line.startswith('#'):
-                key, value = line.strip().split('=', 1)
-                os.environ[key] = value
-
+from pathlib import Path
+from dotenv import load_dotenv
 from a2a.client import A2AClient
-from a2a.types import (
-    AgentCard,
-    SendMessageRequest,
-    MessageSendParams,
-)
+from a2a.types import AgentCard, Message, SendMessageRequest, MessageSendParams
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Load environment variables from .env file
+def load_environment():
+    # Look for .env file in current directory and parent directories
+    current_dir = Path(__file__).parent.absolute()
+    env_path = None
+    
+    # Check current directory and parent directories
+    for path in [current_dir, current_dir.parent]:
+        env_file = path / '.env'
+        if env_file.exists():
+            env_path = env_file
+            break
+    
+    if env_path:
+        logger.info(f"Loading environment from: {env_path}")
+        load_dotenv(env_path)
+    else:
+        logger.warning("No .env file found in current or parent directories")
+
+# Load environment variables
+load_environment()
 
 @dataclass
 class ServiceNowConfig:
@@ -53,35 +62,25 @@ class ServiceNowConfig:
     agent_id: str  # ServiceNow agent ID
     api_key: str   # ServiceNow API key
     
-    @property
-    def base_url(self) -> str:
-        """Base URL for A2A API"""
-        return f"https://{self.instance}/api/sn_aia/a2a/id"
-    
-    @property
-    def discovery_url(self) -> str:
-        """Agent discovery URL"""
-        return f"{self.base_url}/{self.agent_id}/well_known/agent_json"
-    
     @classmethod
     def from_env(cls) -> 'ServiceNowConfig':
         """Create configuration from environment variables"""
         instance = os.getenv("SERVICENOW_INSTANCE")
-        agent_id = os.getenv("SERVICENOW_AGENT_ID") 
+        agent_id = os.getenv("SERVICENOW_AGENT_ID")
         api_key = os.getenv("SERVICENOW_TOKEN")
         
-        if not instance:
-            raise ValueError("SERVICENOW_INSTANCE environment variable is required")
-        if not agent_id:
-            raise ValueError("SERVICENOW_AGENT_ID environment variable is required")
-        if not api_key:
-            raise ValueError("SERVICENOW_TOKEN environment variable is required")
+        if not all([instance, agent_id, api_key]):
+            raise ValueError(
+                "Missing required environment variables. Please set:\n"
+                "- SERVICENOW_INSTANCE\n"
+                "- SERVICENOW_AGENT_ID\n"
+                "- SERVICENOW_TOKEN"
+            )
             
         return cls(instance=instance, agent_id=agent_id, api_key=api_key)
 
-
 class ServiceNowA2AClient:
-    """Generic ServiceNow A2A Client"""
+    """ServiceNow A2A Client"""
     
     def __init__(self, instance: str = None, agent_id: str = None, api_key: str = None):
         """
@@ -91,144 +90,118 @@ class ServiceNowA2AClient:
             instance: ServiceNow instance (e.g., "your-instance.service-now.com")
             agent_id: ServiceNow agent ID
             api_key: ServiceNow API key
-            
-        If parameters are None, will attempt to load from environment variables.
         """
-        if instance and agent_id and api_key:
-            self.config = ServiceNowConfig(instance=instance, agent_id=agent_id, api_key=api_key)
-        else:
-            self.config = ServiceNowConfig.from_env()
+        # Load from parameters or environment variables
+        self.config = ServiceNowConfig(
+            instance=instance or os.getenv("SERVICENOW_INSTANCE"),
+            agent_id=agent_id or os.getenv("SERVICENOW_AGENT_ID"),
+            api_key=api_key or os.getenv("SERVICENOW_TOKEN")
+        )
         
-        self.agent_card: Optional[AgentCard] = None
-        self.a2a_client: Optional[A2AClient] = None
-    
-    async def fetch_agent_card(self, httpx_client: httpx.AsyncClient) -> AgentCard:
-        """Fetch agent card from ServiceNow discovery endpoint"""
+        # Log the configuration (without exposing the full API key)
+        logger.info(f"Configuration loaded - Instance: {self.config.instance}, Agent ID: {self.config.agent_id}")
+        
+        if not all([self.config.instance, self.config.agent_id, self.config.api_key]):
+            raise ValueError(
+                "Missing required configuration. Please provide:\n"
+                "- SERVICENOW_INSTANCE\n"
+                "- SERVICENOW_AGENT_ID\n"
+                "- SERVICENOW_TOKEN\n"
+                "Either pass these as parameters or set them in the .env file."
+            )
+
+        # Initialize HTTP client settings
+        self.timeout = httpx.Timeout(30.0, connect=10.0)
+        self.agent_card_url = f"https://{self.config.instance}/api/sn_aia/a2a/id/{self.config.agent_id}/well_known/agent_json"
+        
+    async def _get_agent_card(self, client: httpx.AsyncClient) -> AgentCard:
+        """Fetch the agent card from ServiceNow."""
         try:
-            print(f"🔍 Discovering agent at: {self.config.instance}")
-            print(f"📋 Agent ID: {self.config.agent_id}")
-            print(f"🌐 Discovery URL: {self.config.discovery_url}")
-            
             headers = {
                 'content-type': 'application/json',
                 'x-sn-apikey': self.config.api_key,
-                'user-agent': 'ServiceNow-A2A-Client/1.0'
+                'user-agent': 'python-a2a-client/1.0'
             }
             
-            response = await httpx_client.get(self.config.discovery_url, headers=headers)
+            logger.info(f"Fetching agent card from: {self.agent_card_url}")
+            response = await client.get(self.agent_card_url, headers=headers)
             response.raise_for_status()
             
             agent_card_data = response.json()
             agent_card = AgentCard(**agent_card_data)
             
-            print("✅ Agent discovered successfully!")
-            print(f"📝 Name: {agent_card.name}")
-            print(f"📄 Description: {agent_card.description}")
-            print(f"🔗 Invocation URL: {agent_card.url}")
+            logger.info(f"Agent card loaded: {agent_card.name}")
+            logger.debug(f"Agent details: {agent_card}")
             
-            self.agent_card = agent_card
             return agent_card
-
-        except httpx.HTTPStatusError as e:
-            print(f"❌ HTTP Error {e.response.status_code}: {e.response.text}")
-            raise RuntimeError(f"Failed to fetch agent card: HTTP {e.response.status_code}")
         except Exception as e:
-            print(f"❌ Error fetching agent card: {e}")
-            raise RuntimeError(f"Failed to fetch agent card: {e}")
+            logger.error(f"Failed to fetch agent card: {str(e)}")
+            raise
 
-    def initialize_client(self, httpx_client: httpx.AsyncClient) -> A2AClient:
-        """Initialize A2A client with the discovered agent card"""
-        if not self.agent_card:
-            raise RuntimeError("Agent card not fetched. Call fetch_agent_card() first.")
-        
-        client = A2AClient(
-            httpx_client=httpx_client, 
-            agent_card=self.agent_card
-        )
-        print("✅ A2A Client initialized")
-        
-        self.a2a_client = client
-        return client
-
-    def create_message_body(self, message_text: str, context_id: str = None, task_id: str = None) -> Dict[str, Any]:
-        """
-        Create message body for ServiceNow A2A communication
-        
-        Args:
-            message_text: The message to send to the agent
-            context_id: Optional context ID for conversation continuity
-            task_id: Optional task ID for task tracking
-        """
-        request_id = uuid4().hex
-        message_id = uuid4().hex
-        
-        message_body = {
-            'message': {
-                'role': 'user',
-                'parts': [
-                    {'kind': 'text', 'text': message_text}
-                ],
-                'messageId': message_id,
-                'kind': 'message'  # SDK expects 'message'
-            },
-            'context': {
-                'contextId': context_id,
-                'taskId': task_id
-            },
-            'metadata': {},
-            'pushNotificationUrl': f"http://localhost:8080/a2a/callback/{self.config.agent_id}/{request_id}",
-            'id': request_id
-        }
-
-        return message_body
-
-    async def send_message(self, message_text: str, context_id: str = None, task_id: str = None) -> Dict[str, Any]:
+    async def send_message(self, message: str) -> Dict[str, Any]:
         """
         Send a message to the ServiceNow agent
         
         Args:
-            message_text: The message to send
-            context_id: Optional context ID for conversation continuity
-            task_id: Optional task ID for task tracking
+            message: The message text to send
             
         Returns:
-            The agent's response as a dictionary
+            Dict containing the response from the agent
         """
-        if not self.a2a_client:
-            raise RuntimeError("A2A client not initialized. Call initialize_client() first.")
-        
-        print(f"💬 Sending message: {message_text}")
-        
-        message_body = self.create_message_body(message_text, context_id, task_id)
-        
-        request = SendMessageRequest(
-            id=str(uuid4()), 
-            params=MessageSendParams(**message_body)
-        )
-
-        try:
-            response = await self.a2a_client.send_message(request)
-            print("✅ Message sent successfully!")
-            
-            # Extract and display agent response in a user-friendly way
-            if hasattr(response, 'result') and response.result:
-                result = response.result
-                if hasattr(result, 'status') and result.status:
-                    status = result.status
-                    if hasattr(status, 'message') and status.message:
-                        message = status.message
-                        if hasattr(message, 'parts') and message.parts:
-                            print("\n🤖 Agent Response:")
-                            for part in message.parts:
-                                if hasattr(part, 'text'):
-                                    print(f"   {part.text}")
-                            print()
-            
-            return response.model_dump(mode='json', exclude_none=True)
-            
-        except Exception as e:
-            print(f"❌ Error sending message: {e}")
-            raise
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            try:
+                # Get the agent card
+                agent_card = await self._get_agent_card(client)
+                
+                # Initialize A2A client
+                a2a_client = A2AClient(
+                    httpx_client=client,
+                    agent_card=agent_card
+                )
+                
+                # Create message body
+                request_id = uuid4().hex
+                message_body = {
+                    'message': {
+                        'role': 'user',
+                        'parts': [{'kind': 'text', 'text': message}],
+                        'messageId': uuid4().hex,
+                        'kind': 'message'
+                    },
+                    'context': {
+                        'contextId': None,
+                        'taskId': None
+                    },
+                    'metadata': {},
+                    'pushNotificationUrl': f"http://localhost:8080/a2a/callback/{self.config.agent_id}/{request_id}",
+                    'id': request_id
+                }
+                
+                # Create and send the request
+                request = SendMessageRequest(
+                    id=str(uuid4()),
+                    params=MessageSendParams(**message_body)
+                )
+                
+                logger.info(f"Sending message: {message}")
+                response = await a2a_client.send_message(request)
+                
+                # Convert response to dict if needed
+                if hasattr(response, 'model_dump'):
+                    return response.model_dump(mode='json', exclude_none=True)
+                return dict(response) if hasattr(response, '__dict__') else str(response)
+                
+            except Exception as e:
+                logger.error(f"Error sending message: {str(e)}", exc_info=True)
+                return {
+                    "error": str(e),
+                    "error_type": type(e).__name__,
+                    "config": {
+                        "instance": self.config.instance,
+                        "agent_id": self.config.agent_id,
+                        "api_key": f"{self.config.api_key[:5]}..." if self.config.api_key else None
+                    }
+                }
 
     async def connect_and_send(self, message_text: str, context_id: str = None, task_id: str = None) -> Dict[str, Any]:
         """
@@ -242,50 +215,83 @@ class ServiceNowA2AClient:
         Returns:
             The agent's response as a dictionary
         """
-        timeout = httpx.Timeout(30.0, connect=10.0)
-        
-        async with httpx.AsyncClient(timeout=timeout) as httpx_client:
-            await self.fetch_agent_card(httpx_client)
-            self.initialize_client(httpx_client)
-            return await self.send_message(message_text, context_id, task_id)
-
+        async with httpx.AsyncClient(timeout=self.timeout) as httpx_client:
+            agent_card = await self._get_agent_card(httpx_client)
+            a2a_client = A2AClient(
+                httpx_client=httpx_client,
+                agent_card=agent_card
+            )
+            
+            message_body = {
+                'message': {
+                    'role': 'user',
+                    'parts': [{'kind': 'text', 'text': message_text}],
+                    'messageId': uuid4().hex,
+                    'kind': 'message'
+                },
+                'context': {
+                    'contextId': context_id,
+                    'taskId': task_id
+                },
+                'metadata': {},
+                'pushNotificationUrl': f"http://localhost:8080/a2a/callback/{self.config.agent_id}/{uuid4().hex}",
+                'id': uuid4().hex
+            }
+            
+            request = SendMessageRequest(
+                id=str(uuid4()), 
+                params=MessageSendParams(**message_body)
+            )
+            
+            try:
+                response = await a2a_client.send_message(request)
+                logger.info("Message sent successfully!")
+                
+                # Extract and display agent response in a user-friendly way
+                if hasattr(response, 'result') and response.result:
+                    result = response.result
+                    if hasattr(result, 'status') and result.status:
+                        status = result.status
+                        if hasattr(status, 'message') and status.message:
+                            message = status.message
+                            if hasattr(message, 'parts') and message.parts:
+                                logger.info("Agent Response:")
+                                for part in message.parts:
+                                    if hasattr(part, 'text'):
+                                        logger.info(f"   {part.text}")
+                
+                return response.model_dump(mode='json', exclude_none=True)
+                
+            except Exception as e:
+                logger.error(f"Error sending message: {e}")
+                raise
 
 async def main():
-    """Example usage of the generic ServiceNow A2A client"""
-    print("=== Generic ServiceNow A2A Client ===")
+    """Example usage of the ServiceNow A2A client"""
+    print("=== ServiceNow A2A Client ===")
     
     try:
-        # Option 1: Use environment variables
+        # Initialize client with environment variables from .env
         client = ServiceNowA2AClient()
         
-        # Option 2: Direct configuration (uncomment to use)
-        # client = ServiceNowA2AClient(
-        #     instance="your-instance.service-now.com",
-        #     agent_id="your-agent-id",
-        #     api_key="your-api-key"
-        # )
+        # Test message
+        test_message = "What can you help me with?"
+        print(f"Sending test message: {test_message}")
         
-        print(f"🏢 Instance: {client.config.instance}")
-        print(f"🤖 Agent ID: {client.config.agent_id}")
-        print(f"🔑 API Key: {client.config.api_key[:15]}...")
+        # Send message and get response
+        response = await client.send_message(test_message)
         
-        # Send a message to the agent
-        message = "What can you help me with?"
-        response = await client.connect_and_send(message)
-        
-        print("\n✅ A2A Client completed successfully!")
-        
-    except ValueError as e:
-        print(f"❌ Configuration Error: {e}")
-        print("\nRequired environment variables:")
-        print("  SERVICENOW_INSTANCE=your-instance.service-now.com")
-        print("  SERVICENOW_AGENT_ID=your-agent-id")
-        print("  SERVICENOW_TOKEN=your-api-key")
+        # Print the response
+        print("\n=== Agent Response ===")
+        print(json.dumps(response, indent=2))
+        print("=====================")
         
     except Exception as e:
-        print(f"❌ A2A Client failed: {e}")
+        print(f"Error: {str(e)}")
         print(f"Error type: {type(e).__name__}")
-
+        return 1
+    
+    return 0
 
 if __name__ == "__main__":
     asyncio.run(main())
