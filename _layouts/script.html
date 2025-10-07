@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title | default: site.title }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #323130;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            font-weight: 300;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 8px;
+            right: 60px;
+            background: #0078d4;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #323130;
+            color: white;
+            border: 1px solid #605e5c;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #484644;
+        }
+        
+        .copy-btn.copied {
+            background: #107c10;
+            border-color: #107c10;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+        
+        .alert-info {
+            background: #deecf9;
+            border-color: #0078d4;
+            color: #004578;
+        }
+        
+        .alert-success {
+            background: #dff6dd;
+            border-color: #107c10;
+            color: #0b5a0b;
+        }
+        
+        .alert-warning {
+            background: #fff4ce;
+            border-color: #f9d56e;
+            color: #8a6d3b;
+        }
+        
+        .alert-error {
+            background: #fde7e9;
+            border-color: #d13438;
+            color: #a4262c;
+        }
+        
+        .usage-card {
+            background: #f3f2f1;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0078d4;
+            margin-bottom: 20px;
+        }
+        
+        .usage-card h3 {
+            margin-top: 0;
+            color: #323130;
+        }
+        
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: #f3f2f1;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        .global-nav {
+            background: #f3f2f1;
+            padding: 10px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e1dfdd;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #323130;
+            text-decoration: none;
+        }
+        
+        .nav-links a {
+            color: #0078d4;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+        
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0 15px 0;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0078d4;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+        }
+        
+        .download-btn:hover {
+            background: #106ebe;
+            text-decoration: none;
+        }
+        
+        .download-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Global Navigation -->
+    <nav class="global-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-title">ServiceNow A2A Testing Toolkit</a>
+            <div class="nav-links">
+                <a href="#usage">Usage</a>
+                <a href="#examples">Examples</a>
+                <a href="https://github.com/yourusername/servicenow-a2a-testing-toolkit" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+    
+    {{ content }}
+    
+    <script>
+    function copyCode(button) {
+        const codeBlock = button.nextElementSibling;
+        const range = document.createRange();
+        range.selectNode(codeBlock);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        
+        try {
+            const successful = document.execCommand('copy');
+            const originalText = button.textContent;
+            
+            if (successful) {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }
+        } catch (err) {
+            console.error('Failed to copy:', err);
+        }
+        
+        window.getSelection().removeAllRanges();
+    }
+    </script>
+</body>
+</html>
