@@ -209,6 +209,38 @@
             color: white;
         }
         
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0078d4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .download-btn:hover {
+            background: #106ebe;
+            text-decoration: none;
+        }
+        
+        .download-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        
         @media (max-width: 768px) {
             .nav-container {
                 flex-direction: column;
@@ -436,13 +468,24 @@
     </nav>
 
     <div class="header">
-        <h1>ServiceNow A2A Python Client</h1>
-        <p>A Python client for testing ServiceNow's Agent-to-Agent (A2A) integration</p>
+        <h1>ServiceNow A2A Testing</h1>
+        <p>Python Client Guide</p>
     </div>
-
+    
     <section>
-        <h2>📥 Download</h2>
-        <p>Download the latest version of the Python client script:</p>
+        <div class="script-header">
+            <h1>🐍 Python Client</h1>
+            <a href="generic_a2a_client.py" download class="download-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download Script
+            </a>
+        </div>
+        
+        <p>Save this as <span class="inline-code">generic_a2a_client.py</span>:</p>
         <a href="generic_a2a_client.py" class="download-btn" download>
             <i>↓</i> Download Python Client
         </a>
