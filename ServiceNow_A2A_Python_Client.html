@@ -264,6 +264,15 @@
 
             <p>The script will automatically load your credentials from the <code>.env</code> file and attempt to connect to your ServiceNow instance.</p>
 
+            <div class="alert alert-info">
+                <strong>Note on Agent Types:</strong>
+                <ul>
+                    <li>This client is designed to work with <strong>synchronous</strong> ServiceNow A2A agents.</li>
+                    <li>If you're testing with an <strong>asynchronous</strong> agent, you'll receive an error: <code>"Push Notification URL is required for asynchronous requests"</code>.</li>
+                    <li>For async agents, you'll need to implement a webhook endpoint to receive the response, as they don't return results immediately.</li>
+                </ul>
+            </div>
+
             <h2>Python Client for ServiceNow A2A</h2>
 
             <div class="alert alert-info">
