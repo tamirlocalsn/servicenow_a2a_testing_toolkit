@@ -2,8 +2,8 @@
 
 title: ServiceNow A2A Testing Toolkit
 description: A comprehensive testing toolkit for ServiceNow Agent-to-Agent (A2A) implementations
-url: "https://[username].github.io"
-baseurl: "/[repository-name]"
+url: "https://tamirlocalsn.github.io"
+baseurl: "/servicenow_a2a_testing_toolkit"
 
 # Theme
 theme: minima
