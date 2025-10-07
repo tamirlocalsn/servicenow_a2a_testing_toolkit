@@ -376,6 +376,7 @@ print_status "Step 2: Sending test message to agent..."
 REQUEST_ID=$(uuidgen | tr '[:upper:]' '[:lower:]' | tr -d '-')
 MESSAGE_ID=$(uuidgen | tr '[:upper:]' '[:lower:]' | tr -d '-')
 
+# Create the JSON payload
 JSON_PAYLOAD=$(cat <<EOF
 {
   "jsonrpc": "2.0",
@@ -399,11 +400,143 @@ JSON_PAYLOAD=$(cat <<EOF
     "metadata": {},
     "pushNotificationUrl": "http://localhost:8080/a2a/callback/test/$REQUEST_ID",
     "id": "$REQUEST_ID"
-  },
-  "id": "$REQUEST_ID"
+  }
 }
 EOF
 )
+
+# Send the message
+MESSAGE_RESPONSE=$(curl -s -w "\n%{http_code}" \
+    --max-time 30 \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "x-sn-apikey: $SERVICENOW_TOKEN" \
+    -H "User-Agent: ServiceNow-A2A-Test/1.0" \
+    -d "$JSON_PAYLOAD" \
+    "$INVOCATION_URL" 2>&1)
+
+# Extract HTTP status code (last line) and response body
+HTTP_STATUS=$(echo "$MESSAGE_RESPONSE" | tail -n 1)
+MESSAGE_BODY=$(echo "$MESSAGE_RESPONSE" | sed '$d')
+
+if [ "$HTTP_STATUS" = "200" ]; then
+    print_success "Message sent successfully!"
+    
+    # Extract agent response using python if available
+    AGENT_RESPONSES=$(echo "$MESSAGE_BODY" | python3 -c "
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    result = data.get('result', {})
+    status = result.get('status', {})
+    message = status.get('message', {})
+    parts = message.get('parts', [])
+    
+    for i, part in enumerate(parts):
+        if part.get('kind') == 'text':
+            print(f'Response {i+1}: {part.get(\"text\", \"\")}')
+except:
+    print('Could not parse agent response')
+" 2>/dev/null)
+
+    if [ -n "$AGENT_RESPONSES" ]; then
+        echo ""
+        print_status "Agent Response:"
+        echo "$AGENT_RESPONSES"
+    fi
+    
+    if [ "$VERBOSE" = true ]; then
+        echo ""
+        print_status "Full response:"
+        echo "$MESSAGE_BODY" | python3 -m json.tool 2>/dev/null || echo "$MESSAGE_BODY"
+    fi
+else
+    print_error "Message sending failed! HTTP Status: $HTTP_STATUS"
+    echo "Response: $MESSAGE_BODY"
+    exit 1
+fi
+
+echo ""
+print_success "All tests completed successfully!"
+
+# Generate manual curl commands for reference
+echo ""
+print_status "Manual curl commands for reference:"
+echo ""
+echo "# Discovery:"
+echo "curl --max-time 30 -H \"Content-Type: application/json\" -H \"x-sn-apikey: $SERVICENOW_TOKEN\" -H \"User-Agent: ServiceNow-A2A-Test/1.0\" \"$DISCOVERY_URL\""
+echo ""
+echo "# Send Message:"
+echo "curl --max-time 30 -X POST -H \"Content-Type: application/json\" -H \"x-sn-apikey: $SERVICENOW_TOKEN\" -H \"User-Agent: ServiceNow-A2A-Test/1.0\" -d '$JSON_PAYLOAD' \"$INVOCATION_URL\""
+    "id": "$REQUEST_ID"
+  }
+}
+EOF
+)
+
+# Send the message
+MESSAGE_RESPONSE=$(curl -s -w "\n%{http_code}" \
+    --max-time 30 \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "x-sn-apikey: $SERVICENOW_TOKEN" \
+    -H "User-Agent: ServiceNow-A2A-Test/1.0" \
+    -d "$JSON_PAYLOAD" \
+    "$INVOCATION_URL" 2>&1)
+
+# Extract HTTP status code (last line) and response body
+HTTP_STATUS=$(echo "$MESSAGE_RESPONSE" | tail -n 1)
+MESSAGE_BODY=$(echo "$MESSAGE_RESPONSE" | sed '$d')
+
+if [ "$HTTP_STATUS" = "200" ]; then
+    print_success "Message sent successfully!"
+    
+    # Extract agent response using python if available
+    AGENT_RESPONSES=$(echo "$MESSAGE_BODY" | python3 -c "
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    result = data.get('result', {})
+    status = result.get('status', {})
+    message = status.get('message', {})
+    parts = message.get('parts', [])
+    
+    for i, part in enumerate(parts):
+        if part.get('kind') == 'text':
+            print(f'Response {i+1}: {part.get(\"text\", \"\")}')
+except:
+    print('Could not parse agent response')
+" 2>/dev/null)
+
+    if [ -n "$AGENT_RESPONSES" ]; then
+        echo ""
+        print_status "Agent Response:"
+        echo "$AGENT_RESPONSES"
+    fi
+    
+    if [ "$VERBOSE" = true ]; then
+        echo ""
+        print_status "Full response:"
+        echo "$MESSAGE_BODY" | python3 -m json.tool 2>/dev/null || echo "$MESSAGE_BODY"
+    fi
+else
+    print_error "Message sending failed! HTTP Status: $HTTP_STATUS"
+    echo "Response: $MESSAGE_BODY"
+    exit 1
+fi
+
+echo ""
+print_success "All tests completed successfully!"
+
+# Generate manual curl commands for reference
+echo ""
+print_status "Manual curl commands for reference:"
+echo ""
+echo "# Discovery:"
+echo "curl --max-time 30 -H \"Content-Type: application/json\" -H \"x-sn-apikey: $SERVICENOW_TOKEN\" -H \"User-Agent: ServiceNow-A2A-Test/1.0\" \"$DISCOVERY_URL\""
+echo ""
+echo "# Send Message:"
+echo "curl --max-time 30 -X POST -H \"Content-Type: application/json\" -H \"x-sn-apikey: $SERVICENOW_TOKEN\" -H \"User-Agent: ServiceNow-A2A-Test/1.0\" -d '$JSON_PAYLOAD' \"$INVOCATION_URL\""
 
 MESSAGE_RESPONSE=$(curl -s -w "\n%{http_code}" \
     --max-time 30 \
