@@ -166,6 +166,7 @@
         .nav-links a:hover {
             background: #0078d4;
             color: white;
+            text-decoration: underline;
         }
         
         .nav-links a.current {
@@ -196,6 +197,36 @@
             padding: 20px;
             border-radius: 8px;
             border-left: 4px solid #0078d4;
+        }
+        
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0 15px 0;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0078d4;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+        }
+        
+        .download-btn:hover {
+            background: #106ebe;
+            text-decoration: none;
+        }
+        
+        .download-btn svg {
+            width: 16px;
+            height: 16px;
         }
     </style>
 </head>
@@ -233,6 +264,18 @@
     
     <section>
         <h1>🔧 Automated Testing Script</h1>
+        
+        <div class="script-header">
+            <h2>Script</h2>
+            <a href="test_servicenow_agent.sh" download class="download-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download Script
+            </a>
+        </div>
         
         <p>Save this as <span class="inline-code">test_servicenow_agent.sh</span>:</p>
         
