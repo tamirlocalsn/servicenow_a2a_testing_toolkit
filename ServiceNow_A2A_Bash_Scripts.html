@@ -339,6 +339,7 @@ show_usage() {
     echo "  -t, --token TOKEN          API token"
     echo "  -m, --message MESSAGE      Custom message to send (default: test message)"
     echo "  -d, --discovery-only       Only test agent discovery, don't send message"
+    echo "      --async                Use async mode (will try sync first if not specified)"
     echo "  -v, --verbose              Verbose output"
     echo "  -h, --help                 Show this help"
     echo ""
@@ -353,6 +354,7 @@ show_usage() {
 CUSTOM_MESSAGE=""
 DISCOVERY_ONLY=false
 VERBOSE=false
+ASYNC_MODE=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -374,6 +376,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -d|--discovery-only)
             DISCOVERY_ONLY=true
+            shift
+            ;;
+        --async)
+            ASYNC_MODE=true
             shift
             ;;
         -v|--verbose)
@@ -485,12 +491,105 @@ if [ "$DISCOVERY_ONLY" = true ]; then
     exit 0
 fi
 
+# Function to send message to agent
+send_message() {
+    local mode=$1
+    local payload=$2
+    
+    if [ "$mode" = "sync" ]; then
+        print_status "Sending message in SYNC mode..."
+    else
+        print_status "Sending message in ASYNC mode..."
+    fi
+    
+    if [ "$VERBOSE" = true ]; then
+        print_status "Invocation URL: $INVOCATION_URL"
+        print_status "Request payload:"
+        echo "$payload" | python3 -m json.tool
+        echo ""
+    fi
+    
+    local response
+    response=$(curl -s -w "\n%{http_code}" \
+        --max-time 30 \
+        -X POST \
+        -H "Content-Type: application/json" \
+        -H "x-sn-apikey: $SERVICENOW_TOKEN" \
+        -H "User-Agent: ServiceNow-A2A-Test/1.0" \
+        -d "$payload" \
+        "$INVOCATION_URL" 2>&1)
+    
+    echo "$response"
+}
+
+# Function to parse and display agent response
+parse_agent_response() {
+    local response=$1
+    local http_status=$2
+    local message_body=$3
+    
+    if [ "$http_status" = "200" ]; then
+        print_success "Message sent successfully!"
+        echo ""
+        
+        # Extract and display agent response
+        print_status "Agent Response:"
+        
+        # Try to extract the agent's text response
+        AGENT_RESPONSES=$(echo "$message_body" | python3 -c "
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    result = data.get('result', {})
+    
+    # Check for sync response
+    if 'status' in result and 'message' in result['status']:
+        parts = result['status']['message'].get('parts', [])
+        for i, part in enumerate(parts):
+            if part.get('kind') == 'text':
+                print(f'Response {i+1}: {part.get(\"text\", \"\")}')
+    # Check for async response
+    elif 'message' in result and 'parts' in result['message']:
+        for i, part in enumerate(result['message']['parts']):
+            if part.get('kind') == 'text':
+                print(f'Response {i+1}: {part.get(\"text\", \"\")}')
+    else:
+        print('No text response found in the expected format')
+        print('Full response:', json.dumps(data, indent=2))
+except Exception as e:
+    print(f'Could not parse agent response: {str(e)}')
+" 2>&1)
+
+        if [ -n "$AGENT_RESPONSES" ]; then
+            echo "$AGENT_RESPONSES"
+        else
+            print_warning "Could not extract agent response text"
+        fi
+        
+        if [ "$VERBOSE" = true ]; then
+            echo ""
+            print_status "Full response:"
+            echo "$message_body" | python3 -m json.tool 2>&1 || echo "$message_body"
+        fi
+        
+        return 0
+    else
+        print_error "Message sending failed! HTTP Status: $http_status"
+        echo "Response: $message_body"
+        return 1
+    fi
+}
+
 # Test 2: Send Message
 print_status "Step 2: Sending test message to agent..."
 echo ""
 
-# Create JSON payload
-JSON_PAYLOAD=$(cat &lt;&lt;EOF
+# Generate a random callback token for async mode
+CALLBACK_TOKEN=$(uuidgen | tr -d '-')
+CALLBACK_URL="http://localhost:8080/a2a/callback/$SERVICENOW_AGENT_ID/$CALLBACK_TOKEN"
+
+# Create JSON payload for sync mode
+SYNC_JSON_PAYLOAD=$(cat <<EOF
 {
   "jsonrpc": "2.0",
   "method": "message/send",
@@ -511,7 +610,7 @@ JSON_PAYLOAD=$(cat &lt;&lt;EOF
       "taskId": null
     },
     "metadata": {},
-    "pushNotificationUrl": "http://localhost:8080/a2a/callback/test/$REQUEST_ID",
+    "pushNotificationUrl": "$CALLBACK_URL",
     "id": "$REQUEST_ID"
   },
   "id": "$REQUEST_ID"
@@ -519,65 +618,72 @@ JSON_PAYLOAD=$(cat &lt;&lt;EOF
 EOF
 )
 
-if [ "$VERBOSE" = true ]; then
-    print_status "Invocation URL: $INVOCATION_URL"
-    print_status "Request payload:"
-    echo "$JSON_PAYLOAD" | python3 -m json.tool
-    echo ""
+# Create JSON payload for async mode
+ASYNC_JSON_PAYLOAD=$(cat <<EOF
+{
+  "jsonrpc": "2.0",
+  "method": "message/send",
+  "params": {
+    "configuration": {
+      "acceptedOutputModes": ["application/json"],
+      "historyLength": 0,
+      "pushNotificationConfig": {
+        "url": "$CALLBACK_URL",
+        "token": "$CALLBACK_TOKEN",
+        "authentication": {
+          "schemes": ["Bearer"]
+        }
+      }
+    },
+    "message": {
+      "role": "user",
+      "kind": "message",
+      "parts": [
+        {
+          "kind": "text",
+          "text": "$CUSTOM_MESSAGE"
+        }
+      ],
+      "messageId": "${MESSAGE_ID}_async",
+      "contextId": "$REQUEST_ID",
+      "taskId": "$REQUEST_ID"
+    },
+    "metadata": {}
+  },
+  "id": "${REQUEST_ID}_async"
+}
+EOF
+)
+
+# Try sync mode first if not explicitly in async mode
+if [ "$ASYNC_MODE" = false ]; then
+    MESSAGE_RESPONSE=$(send_message "sync" "$SYNC_JSON_PAYLOAD")
+    HTTP_STATUS=$(echo "$MESSAGE_RESPONSE" | tail -n 1)
+    MESSAGE_BODY=$(echo "$MESSAGE_RESPONSE" | sed '$d')
+    
+    # If sync mode fails with 404 or 405, try async mode
+    if [[ "$HTTP_STATUS" =~ ^(404|405)$ ]]; then
+        print_warning "Sync mode not supported (HTTP $HTTP_STATUS), trying async mode..."
+        echo ""
+        ASYNC_MODE=true
+    else
+        # Parse the sync response
+        if ! parse_agent_response "$MESSAGE_RESPONSE" "$HTTP_STATUS" "$MESSAGE_BODY"; then
+            exit 1
+        fi
+    fi
 fi
 
-MESSAGE_RESPONSE=$(curl -s -w "\n%{http_code}" \
-    --max-time 30 \
-    -X POST \
-    -H "Content-Type: application/json" \
-    -H "x-sn-apikey: $SERVICENOW_TOKEN" \
-    -H "User-Agent: ServiceNow-A2A-Test/1.0" \
-    -d "$JSON_PAYLOAD" \
-    "$INVOCATION_URL" 2&gt;&amp;1)
-
-# Extract HTTP status code (last line) and response body
-HTTP_STATUS=$(echo "$MESSAGE_RESPONSE" | tail -n 1)
-MESSAGE_BODY=$(echo "$MESSAGE_RESPONSE" | sed '$d')
-
-if [ "$HTTP_STATUS" = "200" ]; then
-    print_success "Message sent successfully!"
-    echo ""
+# If in async mode or if sync mode failed with 404/405
+if [ "$ASYNC_MODE" = true ]; then
+    MESSAGE_RESPONSE=$(send_message "async" "$ASYNC_JSON_PAYLOAD")
+    HTTP_STATUS=$(echo "$MESSAGE_RESPONSE" | tail -n 1)
+    MESSAGE_BODY=$(echo "$MESSAGE_RESPONSE" | sed '$d')
     
-    # Extract and display agent response
-    print_status "Agent Response:"
-    
-    # Try to extract the agent's text response
-    AGENT_RESPONSES=$(echo "$MESSAGE_BODY" | python3 -c "
-import sys, json
-try:
-    data = json.load(sys.stdin)
-    result = data.get('result', {})
-    status = result.get('status', {})
-    message = status.get('message', {})
-    parts = message.get('parts', [])
-    
-    for i, part in enumerate(parts):
-        if part.get('kind') == 'text':
-            print(f'Response {i+1}: {part.get(\"text\", \"\")}')
-except:
-    print('Could not parse agent response')
-" 2&gt;/dev/null)
-
-    if [ -n "$AGENT_RESPONSES" ]; then
-        echo "$AGENT_RESPONSES"
-    else
-        print_warning "Could not extract agent response text"
+    # Parse the async response
+    if ! parse_agent_response "$MESSAGE_RESPONSE" "$HTTP_STATUS" "$MESSAGE_BODY"; then
+        exit 1
     fi
-    
-    if [ "$VERBOSE" = true ]; then
-        echo ""
-        print_status "Full response:"
-        echo "$MESSAGE_BODY" | python3 -m json.tool 2&gt;/dev/null || echo "$MESSAGE_BODY"
-    fi
-else
-    print_error "Message sending failed! HTTP Status: $HTTP_STATUS"
-    echo "Response: $MESSAGE_BODY"
-    exit 1
 fi
 
 echo ""
@@ -593,12 +699,20 @@ echo "     -H \"x-sn-apikey: $SERVICENOW_TOKEN\" \\"
 echo "     -H \"User-Agent: ServiceNow-A2A-Test/1.0\" \\"
 echo "     \"$DISCOVERY_URL\""
 echo ""
-echo "# 2. Send message to agent:"
+echo "# 2. Send message to agent (SYNC mode):"
 echo "curl -X POST \\"
 echo "     -H \"Content-Type: application/json\" \\"
 echo "     -H \"x-sn-apikey: $SERVICENOW_TOKEN\" \\"
 echo "     -H \"User-Agent: ServiceNow-A2A-Test/1.0\" \\"
-echo "     -d '$JSON_PAYLOAD' \\"
+echo "     -d '$SYNC_JSON_PAYLOAD' \\"
+echo "     \"$INVOCATION_URL\""
+echo ""
+echo "# 3. Send message to agent (ASYNC mode):"
+echo "curl -X POST \\"
+echo "     -H \"Content-Type: application/json\" \\"
+echo "     -H \"x-sn-apikey: $SERVICENOW_TOKEN\" \\"
+echo "     -H \"User-Agent: ServiceNow-A2A-Test/1.0\" \\"
+echo "     -d '$ASYNC_JSON_PAYLOAD' \\"
 echo "     \"$INVOCATION_URL\""
             </pre>
         </div>
