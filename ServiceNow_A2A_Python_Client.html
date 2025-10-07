@@ -465,71 +465,73 @@ class ServiceNowA2AClient:
                     }
                 }
 
-    async def connect_and_send(self, message_text: str, context_id: str = None, task_id: str = None) -> Dict[str, Any]:
-        """
-        Connect to ServiceNow and send a message in one step.
-        
-        This is a convenience method that combines fetching the agent card,
-        initializing the client, and sending a message.
-        
-        Args:
-            message_text: The message to send
-            context_id: Optional context ID for conversation continuity
-            task_id: Optional task ID for task tracking
-            
-        Returns:
-            The agent's response as a dictionary
-        """
-        async with httpx.AsyncClient(timeout=self.timeout) as httpx_client:
-            agent_card = await self._get_agent_card(httpx_client)
-            a2a_client = A2AClient(
-                httpx_client=httpx_client,
-                agent_card=agent_card
-            )
-            
-            message_body = {
-                'message': {
-                    'role': 'user',
-                    'parts': [{'kind': 'text', 'text': message_text}],
-                    'messageId': uuid4().hex,
-                    'kind': 'message'
-                },
-                'context': {
-                    'contextId': context_id,
-                    'taskId': task_id
-                },
-                'metadata': {},
-                'pushNotificationUrl': f"http://localhost:8080/a2a/callback/{self.config.agent_id}/{uuid4().hex}",
-                'id': uuid4().hex
-            }
-            
-            request = SendMessageRequest(
-                id=str(uuid4()), 
-                params=MessageSendParams(**message_body)
-            )
-            
+    async def connect_and_send(self, message: str) -> Dict[str, Any]:
+        """Send a message to the ServiceNow agent."""
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
             try:
-                response = await a2a_client.send_message(request)
-                logger.info("Message sent successfully!")
+                # Get the agent card
+                agent_card = await self._get_agent_card(client)
                 
-                # Extract and display agent response in a user-friendly way
-                if hasattr(response, 'result') and response.result:
-                    result = response.result
-                    if hasattr(result, 'status') and result.status:
-                        status = result.status
-                        if hasattr(status, 'message') and status.message:
-                            message = status.message
-                            if hasattr(message, 'parts') and message.parts:
-                                logger.info("Agent Response:")
-                                for part in message.parts:
-                                    if hasattr(part, 'text'):
-                                        logger.info(f"   {part.text}")
+                # Initialize A2A client with additional headers
+                client = httpx.AsyncClient(
+                    base_url=f"https://{self.config.instance}",
+                    headers={
+                        'Content-Type': 'application/json',
+                        'x-sn-apikey': self.config.api_key,
+                        'user-agent': 'python-a2a-client/1.0'
+                    },
+                    timeout=self.timeout
+                )
                 
-                return response.model_dump(mode='json', exclude_none=True)
+                # Create message body
+                request_id = uuid4().hex
+                message_body = {
+                    "jsonrpc": "2.0",
+                    "method": "message/send",
+                    "id": request_id,
+                    "params": {
+                        "message": {
+                            "role": "user",
+                            "parts": [{"kind": "text", "text": message}],
+                            "messageId": uuid4().hex,
+                            "kind": "message"
+                        },
+                        "context": {
+                            "contextId": None,
+                            "taskId": None
+                        },
+                        "metadata": {},
+                        "pushNotificationUrl": f"http://localhost:8080/a2a/callback/{self.config.agent_id}/{request_id}"
+                    }
+                }
                 
+                logger.info(f"Sending message: {message}")
+                url = f"/api/sn_aia/a2a/v1/agent/id/{self.config.agent_id}"
+                response = await client.post(url, json=message_body)
+                response.raise_for_status()
+                
+                return response.json()
+                
+            except httpx.HTTPStatusError as e:
+                logger.error(f"HTTP error: {e.response.status_code} - {e.response.text}")
+                return {
+                    "error": f"HTTP {e.response.status_code}",
+                    "details": e.response.text,
+                    "status_code": e.response.status_code
+                }
             except Exception as e:
-                logger.error(f"Error sending message: {e}")
-                raise
+                logger.error(f"Error sending message: {str(e)}", exc_info=True)
+                return {
+                    "error": str(e),
+                    "error_type": type(e).__name__,
+                    "config": {
+                        "instance": self.config.instance,
+                        "agent_id": self.config.agent_id,
+                        "api_key": f"{self.config.api_key[:5]}..." if self.config.api_key else None
+                    }
+                }
+            finally:
+                await client.aclose()
 
 async def main():
     """Example usage of the ServiceNow A2A client"""
