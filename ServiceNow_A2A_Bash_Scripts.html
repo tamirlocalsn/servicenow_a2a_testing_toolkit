@@ -122,10 +122,14 @@
         }
         
         .global-nav {
-            background: #f3f2f1;
-            padding: 15px 0;
+            background: #ffffff;
+            padding: 10px 0;
             margin-bottom: 30px;
-            border-radius: 8px;
+            border-bottom: 1px solid #e1dfdd;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .nav-container {
@@ -138,34 +142,60 @@
         }
         
         .nav-brand {
-            font-weight: bold;
-            font-size: 1.2em;
+            font-weight: 600;
+            font-size: 1.3em;
             color: #0078d4;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         
         .nav-links a {
             color: #323130;
             text-decoration: none;
-            padding: 5px 10px;
+            padding: 8px 16px;
             border-radius: 4px;
-            transition: background-color 0.2s;
+            transition: all 0.2s ease;
+            font-size: 0.95em;
+            border: 1px solid transparent;
         }
         
         .nav-links a:hover {
-            background: #0078d4;
-            color: white;
-            text-decoration: underline;
+            background: #f3f2f1;
+            color: #0078d4;
+            text-decoration: none;
+            border-color: #e1dfdd;
         }
         
         .nav-links a.current {
             background: #0078d4;
-            color: white;
+            color: white !important;
+            border-color: #0078d4;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .nav-links a {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
         }
         
         .script-header {
