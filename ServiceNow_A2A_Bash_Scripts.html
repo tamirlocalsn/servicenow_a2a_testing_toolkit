@@ -558,29 +558,29 @@ parse_agent_response() {
         print_status "Agent Response:"
         
         # Try to extract the agent's text response
-        AGENT_RESPONSES=$(echo "$message_body" | python3 -c '
+        AGENT_RESPONSES=$(python3 -c "
 import sys, json
 try:
     data = json.load(sys.stdin)
-    result = data.get("result", {})
+    result = data.get('result', {})
     
     # Check for sync response
-    if "status" in result and "message" in result["status"]:
-        parts = result["status"]["message"].get("parts", [])
+    if 'status' in result and 'message' in result['status']:
+        parts = result['status']['message'].get('parts', [])
         for i, part in enumerate(parts):
-            if part.get("kind") == "text":
-                print("Response {}: {}".format(i+1, part.get("text", "")))
+            if part.get('kind') == 'text':
+                print('Response {}: {}'.format(i+1, part.get('text', '')))
     # Check for async response
-    elif "message" in result and "parts" in result["message"]:
-        for i, part in enumerate(result["message"]["parts"]):
-            if part.get("kind") == "text":
-                print("Response {}: {}".format(i+1, part.get("text", "")))
+    elif 'message' in result and 'parts' in result['message']:
+        for i, part in enumerate(result['message']['parts']):
+            if part.get('kind') == 'text':
+                print('Response {}: {}'.format(i+1, part.get('text', '')))
     else:
-        print("No text response found in the expected format")
-        print("Full response:", json.dumps(data, indent=2))
+        print('No text response found in the expected format')
+        print('Full response:', json.dumps(data, indent=2))
 except Exception as e:
-    print("Could not parse agent response: {}".format(str(e)))
-' 2>&1)
+    print('Could not parse agent response: {}'.format(str(e)))
+" 2>&1 <<< "$message_body")
 
         if [ -n "$AGENT_RESPONSES" ]; then
             echo "$AGENT_RESPONSES"
